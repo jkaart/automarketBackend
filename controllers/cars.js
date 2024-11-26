@@ -1,7 +1,13 @@
-const loginRouter = require('express').Router()
+const carsRouter = require('express').Router()
+const Car = require('../models/car')
 
-loginRouter.post('/', async (request, response) => {
-    
+carsRouter.get('/', async (request, response) => {
+    const cars = await Car.find({})
+    if (cars.length > 0) {
+        return response.json(cars)
+    }
+    response.status(204).end()
+
 })
 
-module.exports = loginRouter
+module.exports = carsRouter

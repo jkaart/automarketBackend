@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/car
+Content-Type: application/json
+
+{
+    "mark": "Volkswagen",
+    "model": "Golf",
+    "fuelType": "bensa",
+    "mileage": 100000,
+    "gearBoxType": "manual",
+    "description": "Hyvä auto"
+}
