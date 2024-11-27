@@ -4,8 +4,8 @@ const app = express()
 require('express-async-errors')
 const mongoose = require('mongoose')
 
-const carsRouter = require('./controllers/cars')
-const carRouter = require('./controllers/car')
+const itemsRouter = require('./controllers/items')
+const itemRouter = require('./controllers/item')
 
 const logger = require('./utils/logger')
 
@@ -23,7 +23,7 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(express.json())
 
-app.use('/api/cars', carsRouter)
-app.use('/api/car', carRouter)
+app.use('/api/items', itemsRouter)
+app.use('/api/item', itemRouter)
 
 module.exports = app

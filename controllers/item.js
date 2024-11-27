@@ -1,7 +1,7 @@
-const carRouter = require('express').Router()
+const itemRouter = require('express').Router()
 const Car = require('../models/car')
 
-carRouter.post('/', async (request, response) => {
+itemRouter.post('/', async (request, response) => {
     console.log(request.body)
     const { mark, model, fuelType, mileage, gearBoxType, description } = request.body
 
@@ -22,4 +22,4 @@ carRouter.post('/', async (request, response) => {
         .json({ savedCar, message: 'Announcement registered successfully' })
 })
 
-module.exports = carRouter
+module.exports = itemRouter

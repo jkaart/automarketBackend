@@ -1,7 +1,7 @@
-const carsRouter = require('express').Router()
+const itemsRouter = require('express').Router()
 const Car = require('../models/car')
 
-carsRouter.get('/', async (request, response) => {
+itemsRouter.get('/', async (request, response) => {
     const cars = await Car.find({})
     if (cars.length > 0) {
         return response.json(cars)
@@ -10,4 +10,4 @@ carsRouter.get('/', async (request, response) => {
 
 })
 
-module.exports = carsRouter
+module.exports = itemsRouter
