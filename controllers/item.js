@@ -2,7 +2,6 @@ const itemRouter = require('express').Router()
 const Car = require('../models/car')
 
 itemRouter.post('/', async (request, response) => {
-    console.log(request.body)
     const { mark, model, fuelType, mileage, gearBoxType, description } = request.body
 
     const car = new Car({
@@ -13,13 +12,23 @@ itemRouter.post('/', async (request, response) => {
         gearBoxType,
         description
     })
-    console.log(car)
 
     const savedCar = await car.save()
 
-    return response
+    response
         .status(201)
         .json({ savedCar, message: 'Announcement registered successfully' })
+})
+
+itemRouter.get('/:id', async (request, response) => {
+    const itemId = request.params.id
+    const car = await Car.findById(itemId)
+
+    if (!car) {
+        return response.status(404).json({message: 'Announcement not found'})
+    }
+    response.json(car)
+
 })
 
 module.exports = itemRouter
