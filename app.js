@@ -8,6 +8,7 @@ const itemsRouter = require('./controllers/items')
 const itemRouter = require('./controllers/item')
 
 const logger = require('./utils/logger')
+const middleware = require('./utils/middleware')
 
 mongoose.set('strictQuery', false)
 
@@ -22,8 +23,12 @@ mongoose.connect(config.MONGODB_URI)
     })
 
 app.use(express.json())
+app.use(middleware.requestLogger)
 
 app.use('/api/items', itemsRouter)
 app.use('/api/item', itemRouter)
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
 
 module.exports = app
