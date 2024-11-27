@@ -2,6 +2,30 @@ const itemRouter = require('express').Router()
 const Car = require('../models/car')
 
 itemRouter.post('/', async (request, response) => {
+    /*
+        #swagger.tags = ['Item']
+        #swagger.summary = "Save a new car announcement"
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        $ref: "#/components/schemas/Item"
+                    }
+                }
+            }
+        }
+        #swagger.responses[200] = {
+            description: "Response back saved car, id and message",
+            content: {
+                "application/json": {
+                    schema: { 
+                        $ref: "#/components/schemas/Item"
+                    },
+                }           
+            }
+        }  
+    */
     const { mark, model, fuelType, mileage, gearBoxType, description } = request.body
 
     const car = new Car({
@@ -20,7 +44,13 @@ itemRouter.post('/', async (request, response) => {
         .json({ savedCar, message: 'Announcement registered successfully' })
 })
 
+
+
 itemRouter.get('/:id', async (request, response) => {
+    /*
+        #swagger.tags = ['Item']
+        #swagger.summary = 'Get individual car announcement'
+    */
     const itemId = request.params.id
     const car = await Car.findById(itemId)
 
@@ -31,7 +61,13 @@ itemRouter.get('/:id', async (request, response) => {
 
 })
 
+
+
 itemRouter.delete('/:id', async (request, response) => {
+    /*
+        #swagger.tags = ['Item']
+        #swagger.summary = 'Delete individual car announcement'
+    */
     const itemId = request.params.id
     const deletedCar = await Car.findByIdAndDelete(itemId)
 
