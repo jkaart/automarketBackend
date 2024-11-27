@@ -9,6 +9,9 @@
     {
       "url": "http://localhost:3001",
       "description": ""
+    },
+    {
+      "url": "https://automarketbackend.onrender.com"
     }
   ],
   "tags": [
