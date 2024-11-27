@@ -3,6 +3,9 @@ const express = require('express')
 const app = express()
 require('express-async-errors')
 const mongoose = require('mongoose')
+const swaggerUi = require('swagger-ui-express')
+
+const swaggerDocs = require('./docs/swagger-output.json')
 
 const itemsRouter = require('./controllers/items')
 const itemRouter = require('./controllers/item')
@@ -27,6 +30,8 @@ app.use(middleware.requestLogger)
 
 app.use('/api/items', itemsRouter)
 app.use('/api/item', itemRouter)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
