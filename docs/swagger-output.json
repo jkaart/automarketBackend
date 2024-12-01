@@ -1,18 +1,36 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "Automarketti API",
+    "description": "Automarketti site API",
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "http://localhost:3001",
+      "description": ""
+    },
+    {
+      "url": "https://automarketbackend.onrender.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Item",
+      "description": "Individual announcement endpoints"
+    },
+    {
+      "name": "Items",
+      "description": "All announcements endpoints"
     }
   ],
   "paths": {
     "/api/items/": {
       "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Response all announcements",
         "description": "",
         "responses": {
           "200": {
@@ -26,37 +44,35 @@
     },
     "/api/item/": {
       "post": {
+        "tags": [
+          "Item"
+        ],
+        "summary": "Save a new car announcement",
         "description": "",
         "responses": {
+          "200": {
+            "description": "Response back saved car, id and message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Item"
+                }
+              }
+            }
+          },
           "201": {
             "description": "Created"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "mark": {
-                    "example": "any"
-                  },
-                  "model": {
-                    "example": "any"
-                  },
-                  "fuelType": {
-                    "example": "any"
-                  },
-                  "mileage": {
-                    "example": "any"
-                  },
-                  "gearBoxType": {
-                    "example": "any"
-                  },
-                  "description": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/components/schemas/Item"
               }
             }
           }
@@ -65,6 +81,10 @@
     },
     "/api/item/{id}": {
       "get": {
+        "tags": [
+          "Item"
+        ],
+        "summary": "Get individual car announcement",
         "description": "",
         "parameters": [
           {
@@ -86,6 +106,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "Item"
+        ],
+        "summary": "Delete individual car announcement",
         "description": "",
         "parameters": [
           {
@@ -102,6 +126,47 @@
             "description": "No Content"
           }
         }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Item": {
+        "type": "object",
+        "properties": {
+          "mark": {
+            "type": "string",
+            "example": "Volvo"
+          },
+          "model": {
+            "type": "string",
+            "example": "V70"
+          },
+          "fuelType": {
+            "type": "string",
+            "example": "Diesel"
+          },
+          "mileage": {
+            "type": "number",
+            "example": 120000
+          },
+          "gearBoxType": {
+            "type": "string",
+            "example": "Manual"
+          },
+          "description": {
+            "type": "string",
+            "example": "Hyvä auto"
+          }
+        },
+        "required": [
+          "mark",
+          "model",
+          "fuelType",
+          "mileage",
+          "gearBoxType",
+          "description"
+        ]
       }
     }
   }

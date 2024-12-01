@@ -26,7 +26,8 @@ const carSchema = mongoose.Schema({
         type:Boolean,
         default:true
     },
-    description: String
+    description: String,
+    photoFileNames: Array,
 })
 
 carSchema.set('toJSON', {
