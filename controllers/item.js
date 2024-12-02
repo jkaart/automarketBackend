@@ -123,7 +123,13 @@ itemRouter.post('/', upload.array('photos', 3), async (request, response) => {
     })
 })
 
+
+
 itemRouter.get('/:id', async (request, response) => {
+    /*
+        #swagger.tags = ['Item']
+        #swagger.summary = 'Get individual car announcement'
+    */
 
     const itemId = request.params.id
     const car = await Car.findById(itemId)
@@ -136,7 +142,11 @@ itemRouter.get('/:id', async (request, response) => {
 })
 
 itemRouter.delete('/:id', async (request, response) => {
-
+    /*
+        #swagger.tags = ['Item']
+        #swagger.summary = 'Delete individual car announcement'
+    */
+  
     const itemId = request.params.id
     const deletedCar = await Car.findByIdAndDelete(itemId)
 

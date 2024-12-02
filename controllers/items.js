@@ -7,10 +7,10 @@ itemsRouter.get('/', async (request, response) => {
         #swagger.summary = 'Response all announcements'
     */
     const cars = await Car.find({})
-    if (cars.length > 0) {
-        return response.json(cars)
+    if (!cars) {
+        return response.status(204).end()
     }
-    response.status(204).end()
+    response.json(cars)
 
 })
 
