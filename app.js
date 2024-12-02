@@ -9,6 +9,7 @@ const swaggerDocs = require('./docs/swagger-output.json')
 
 const itemsRouter = require('./controllers/items')
 const itemRouter = require('./controllers/item')
+const photoRouter = require('./controllers/photo')
 
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
@@ -16,6 +17,7 @@ const middleware = require('./utils/middleware')
 mongoose.set('strictQuery', false)
 
 logger.info('connecting to', config.MONGODB_URI)
+logger.info('Oracle object storage', config.OCI_URI)
 
 mongoose.connect(config.MONGODB_URI)
     .then(() => {
@@ -30,6 +32,7 @@ app.use(middleware.requestLogger)
 
 app.use('/api/items', itemsRouter)
 app.use('/api/item', itemRouter)
+app.use('/api/photo', photoRouter)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 

@@ -10,6 +10,11 @@ const doc = {
             url: 'http://localhost:3001',
             description: ''
         },
+        {
+            url: "https://automarketbackend.onrender.com",
+            description: ''
+        }
+
     ],
     tags: [
         {
@@ -24,12 +29,20 @@ const doc = {
     components: {
         schemas: {
             Item: {
-                $mark: 'Volvo',
-                $model: 'V70',
-                $fuelType: 'Diesel',
-                $mileage: 120_000,
-                $gearBoxType: 'Manual',
-                $description: 'Hyvä auto'
+                mark: { type: 'string'},
+                model: { type: 'string'},
+                fuelType: { type: 'string'},
+                mileage: { type: 'number'},
+                gearBoxType: { type: 'string'},
+                price: { type: 'number'},
+                description: { type: 'string'},
+                photos: {
+                    type: 'array',
+                    items: {
+                        type: 'string',
+                        format: 'binary'
+                    }
+                }
             }
         }
     }

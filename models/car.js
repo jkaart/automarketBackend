@@ -1,3 +1,4 @@
+const config = require('../utils/config')
 const mongoose = require('mongoose')
 
 const carSchema = mongoose.Schema({
@@ -21,20 +22,26 @@ const carSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    price: Number,
+    price: {
+        type: Number,
+        require: true
+    },
     onSale: {
         type:Boolean,
         default:true
     },
-    description: String
+    description: String,
+    photoFileNames: Array,
 })
 
 carSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
+        returnedObject.photoURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/${fileName}`)
         delete returnedObject._id
         delete returnedObject._v
         delete returnedObject.__v
+        delete returnedObject.photoFileNames
     }
 })
 
