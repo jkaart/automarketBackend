@@ -149,19 +149,24 @@ itemRouter.delete('/:id', async (request, response) => {
 
     const itemId = request.params.id
     const deletedCar = await Car.findByIdAndDelete(itemId)
-
-    deletedCar.photoFileNames.map(async fileName => {
-        const result = await axios.delete(`${config.OCI_URI}/${fileName}`)
-        if (result.statusCode === 404) {
-            return
-        }
-
-    })
-
     if (!deletedCar) {
         return response.statusCode(404).end()
     }
+    // const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
+    //     const result = await axios.delete(`${config.OCI_URI}/${fileName}`)
+
+    //     if (result.statusCode === 404) {
+    //         return
+    //     }
+
+    // })
+
+    // Promise.all(deleteResponses).then(() => {
+    //     
+    // })
+
     response.status(204).end()
+
 
 })
 
