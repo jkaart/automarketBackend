@@ -11,7 +11,8 @@
       "description": ""
     },
     {
-      "url": "https://automarketbackend.onrender.com"
+      "url": "https://automarketbackend.onrender.com",
+      "description": ""
     }
   ],
   "tags": [
@@ -50,29 +51,122 @@
         "summary": "Save a new car announcement",
         "description": "",
         "responses": {
-          "200": {
+          "201": {
             "description": "Response back saved car, id and message",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Item"
+                  "type": "object",
+                  "properties": {
+                    "mark": {
+                      "type": "string",
+                      "example": "Volvo",
+                      "description": "Car mark"
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "V70",
+                      "description": "Car model"
+                    },
+                    "fuelType": {
+                      "type": "string",
+                      "example": "diesel",
+                      "description": "Car fuel type"
+                    },
+                    "mileage": {
+                      "type": "number",
+                      "example": 120000,
+                      "description": "Car mileage or odometer reading"
+                    },
+                    "gearBoxType": {
+                      "type": "string",
+                      "example": "manual",
+                      "description": "Car gear box type"
+                    },
+                    "price": {
+                      "type": "number",
+                      "example": 10000,
+                      "description": "Car price"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Hyvä auto",
+                      "description": "Announcement description"
+                    },
+                    "photos": {
+                      "description": "Car photos",
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "binary"
+                      }
+                    }
+                  }
                 }
               }
             }
-          },
-          "201": {
-            "description": "Created"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
           }
         },
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Item"
+                "type": "object",
+                "properties": {
+                  "mark": {
+                    "type": "string",
+                    "example": "Volvo",
+                    "description": "Car mark"
+                  },
+                  "model": {
+                    "type": "string",
+                    "example": "V70",
+                    "description": "Car model"
+                  },
+                  "fuelType": {
+                    "type": "string",
+                    "example": "diesel",
+                    "description": "Car fuel type"
+                  },
+                  "mileage": {
+                    "type": "number",
+                    "example": 120000,
+                    "description": "Car mileage or odometer reading"
+                  },
+                  "gearBoxType": {
+                    "type": "string",
+                    "example": "manual",
+                    "description": "Car gear box type"
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 10000,
+                    "description": "Car price"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Hyvä auto",
+                    "description": "Announcement description"
+                  },
+                  "photos": {
+                    "description": "Car photos",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                },
+                "required": [
+                  "mark",
+                  "model",
+                  "fuelType",
+                  "mileage",
+                  "gearBoxType",
+                  "price",
+                  "photos"
+                ]
               }
             }
           }
@@ -81,10 +175,6 @@
     },
     "/api/item/{id}": {
       "get": {
-        "tags": [
-          "Item"
-        ],
-        "summary": "Get individual car announcement",
         "description": "",
         "parameters": [
           {
@@ -106,10 +196,6 @@
         }
       },
       "delete": {
-        "tags": [
-          "Item"
-        ],
-        "summary": "Delete individual car announcement",
         "description": "",
         "parameters": [
           {
@@ -127,6 +213,26 @@
           }
         }
       }
+    },
+    "/api/photo/{fileName}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "fileName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -135,38 +241,91 @@
         "type": "object",
         "properties": {
           "mark": {
-            "type": "string",
-            "example": "Volvo"
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
           },
           "model": {
-            "type": "string",
-            "example": "V70"
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
           },
           "fuelType": {
-            "type": "string",
-            "example": "Diesel"
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
           },
           "mileage": {
-            "type": "number",
-            "example": 120000
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "number"
+              }
+            }
           },
           "gearBoxType": {
-            "type": "string",
-            "example": "Manual"
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "price": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "number"
+              }
+            }
           },
           "description": {
-            "type": "string",
-            "example": "Hyvä auto"
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "photos": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "array"
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "format": {
+                    "type": "string",
+                    "example": "binary"
+                  }
+                }
+              }
+            }
           }
-        },
-        "required": [
-          "mark",
-          "model",
-          "fuelType",
-          "mileage",
-          "gearBoxType",
-          "description"
-        ]
+        }
       }
     }
   }

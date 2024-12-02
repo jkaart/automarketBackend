@@ -21,7 +21,10 @@ const carSchema = mongoose.Schema({
         type: String,
         require: true
     },
-    price: Number,
+    price: {
+        type: Number,
+        require: true
+    },
     onSale: {
         type:Boolean,
         default:true

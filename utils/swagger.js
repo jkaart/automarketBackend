@@ -1,4 +1,4 @@
-const swaggerAutogen = require('swagger-autogen')({openapi: '3.0.0'})
+const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' })
 
 const doc = {
     info: {
@@ -28,12 +28,20 @@ const doc = {
     components: {
         schemas: {
             Item: {
-                $mark: 'Volvo',
-                $model: 'V70',
-                $fuelType: 'Diesel',
-                $mileage: 120_000,
-                $gearBoxType: 'Manual',
-                $description: 'Hyvä auto'
+                mark: { type: 'string'},
+                model: { type: 'string'},
+                fuelType: { type: 'string'},
+                mileage: { type: 'number'},
+                gearBoxType: { type: 'string'},
+                price: { type: 'number'},
+                description: { type: 'string'},
+                photos: {
+                    type: 'array',
+                    items: {
+                        type: 'string',
+                        format: 'binary'
+                    }
+                }
             }
         }
     }

@@ -22,43 +22,78 @@ const upload =
         fileFilter: checkFileTypes
     })
 
-itemRouter.post('/', upload.array('file', 3), async (request, response) => {
-    /*
-        #swagger.tags = ['Item']
-        #swagger.summary = "Save a new car announcement"
-        #swagger.requestBody = {
-            required: true,
-            content: {
-                "application/json": {
-                    schema: {
-                        $ref: "#/components/schemas/Item"
-                    }
+itemRouter.post('/', upload.array('photos', 3), async (request, response) => {
+    /*@swagger
+    #swagger.tags = ['Item']
+    #swagger.summary = "Save a new car announcement"
+    #swagger.requestBody = {
+        required: true,
+        content: {
+            "multipart/form-data": {
+                schema: {
+                    type: 'object',
+                    properties: {
+                        mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
+                        model: { type: 'string', example: 'V70', description: 'Car model' },
+                        fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
+                        mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
+                        gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
+                        price: { type: 'number', example: 10000, description: 'Car price' },
+                        description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
+                        photos: {
+                            description: 'Car photos',
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                format: 'binary'
+                            }
+                        }
+                    },
+                    required: ['mark','model', 'fuelType', 'mileage', 'gearBoxType', 'price', 'photos']
                 }
             }
         }
-        #swagger.responses[200] = {
-            description: "Response back saved car, id and message",
-            content: {
-                "application/json": {
-                    schema: { 
-                        $ref: "#/components/schemas/Item"
-                    },
-                }           
-            }
-        }  
+    }
+    #swagger.responses[201] = {
+        description: "Response back saved car, id and message",
+        content: {
+            "application/json": {
+                schema: { 
+                    type: 'object',
+                    properties: {
+                        mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
+                        model: { type: 'string', example: 'V70', description: 'Car model' },
+                        fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
+                        mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
+                        gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
+                        price: { type: 'number', example: 10000, description: 'Car price' },
+                        description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
+                        photos: {
+                            description: 'Car photos',
+                            type: 'array',
+                            items: {
+                                type: 'string',
+                                format: 'binary'
+                            }
+                        }
+                    }
+                },
+            }           
+        }
+    }
     */
-    const { mark, model, fuelType, mileage, gearBoxType, description } = request.body
-    if (!request.files) {
+    const { mark, model, fuelType, mileage, gearBoxType, price, description } = request.body
+    /* if (!request.files) {
         return response.status(422).json('Photos missing')
     }
-
+ */
     const storedFileNames = []
 
     const uploadResponses = request.files.map(async file => {
         const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
         const newFileName = uuidv4() + orgFileExt
         storedFileNames.push(newFileName)
-        const result = await axios.put(`${config.OCI_PAR}\/${config.PHOTO_FOLDER}\/${newFileName}`, file.buffer,
+        const result = await axios.put(`${config.OCI_URI}/${newFileName}`, file.buffer,
             {
                 headers: {
                     'Content-Type': file.mimetype,
@@ -75,23 +110,22 @@ itemRouter.post('/', upload.array('file', 3), async (request, response) => {
             fuelType,
             mileage,
             gearBoxType,
+            price,
             description,
             photoFileNames: storedFileNames
         })
 
         const savedCar = await car.save()
-
+        const modifiedSavedCar = savedCar.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/${fileName}`)
+        
         response
             .status(201)
-            .json({ savedCar, message: 'Announcement registered successfully' })
+            .json({ modifiedSavedCar, message: 'Announcement registered successfully' })
     })
 })
 
 itemRouter.get('/:id', async (request, response) => {
-    /*
-        #swagger.tags = ['Item']
-        #swagger.summary = 'Get individual car announcement'
-    */
+
     const itemId = request.params.id
     const car = await Car.findById(itemId)
 
@@ -103,10 +137,7 @@ itemRouter.get('/:id', async (request, response) => {
 })
 
 itemRouter.delete('/:id', async (request, response) => {
-    /*
-        #swagger.tags = ['Item']
-        #swagger.summary = 'Delete individual car announcement'
-    */
+
     const itemId = request.params.id
     const deletedCar = await Car.findByIdAndDelete(itemId)
 
