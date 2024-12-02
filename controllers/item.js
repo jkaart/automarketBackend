@@ -146,9 +146,17 @@ itemRouter.delete('/:id', async (request, response) => {
         #swagger.tags = ['Item']
         #swagger.summary = 'Delete individual car announcement'
     */
-  
+
     const itemId = request.params.id
     const deletedCar = await Car.findByIdAndDelete(itemId)
+
+    deletedCar.photoFileNames.map(async fileName => {
+        const result = await axios.delete(`${config.OCI_URI}/${fileName}`)
+        if (result.statusCode === 404) {
+            return
+        }
+
+    })
 
     if (!deletedCar) {
         return response.statusCode(404).end()

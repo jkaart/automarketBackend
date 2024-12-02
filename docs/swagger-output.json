@@ -51,16 +51,6 @@
         "summary": "Save a new car announcement",
         "description": "",
         "responses": {
-          "200": {
-            "description": "Response back saved car, id and message",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Item"
-                }
-              }
-            }
-          },
           "201": {
             "description": "Response back saved car, id and message",
             "content": {
@@ -344,47 +334,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Item": {
-        "type": "object",
-        "properties": {
-          "mark": {
-            "type": "string",
-            "example": "Volvo"
-          },
-          "model": {
-            "type": "string",
-            "example": "V70"
-          },
-          "fuelType": {
-            "type": "string",
-            "example": "Diesel"
-          },
-          "mileage": {
-            "type": "number",
-            "example": 120000
-          },
-          "gearBoxType": {
-            "type": "string",
-            "example": "Manual"
-          },
-          "description": {
-            "type": "string",
-            "example": "Hyvä auto"
-          }
-        },
-        "required": [
-          "mark",
-          "model",
-          "fuelType",
-          "mileage",
-          "gearBoxType",
-          "description"
-        ]
       }
     }
   }
