@@ -102,7 +102,7 @@ itemRouter.post('/', upload.array('photos', 3), async (request, response) => {
             }
         )
     })
-    
+
     Promise.all(uploadResponses).then(async () => {
         const car = new Car({
             mark,
@@ -116,11 +116,10 @@ itemRouter.post('/', upload.array('photos', 3), async (request, response) => {
         })
 
         const savedCar = await car.save()
-        const modifiedSavedCar = savedCar.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/${fileName}`)
-        
+
         response
             .status(201)
-            .json({ modifiedSavedCar, message: 'Announcement registered successfully' })
+            .json({ savedCar, message: 'Announcement registered successfully' })
     })
 })
 
