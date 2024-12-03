@@ -10,6 +10,10 @@ const swaggerDocs = require('./docs/swagger-output.json')
 const itemsRouter = require('./controllers/items')
 const itemRouter = require('./controllers/item')
 const photoRouter = require('./controllers/photo')
+const registrationRouter = require('./controllers/registration')
+const usersRouter = require('./controllers/users')
+const userRouter = require('./controllers/user')
+const messageRouter = require('./controllers/message')
 
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
@@ -33,6 +37,12 @@ app.use(middleware.requestLogger)
 app.use('/api/items', itemsRouter)
 app.use('/api/item', itemRouter)
 app.use('/api/photo', photoRouter)
+
+app.use('/api/registration', registrationRouter)
+app.use('/api/users', usersRouter)
+app.use('/api/user', userRouter)
+
+app.use('/api/message', messageRouter)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 

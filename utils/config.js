@@ -14,7 +14,7 @@ const SERVER_URL = process.env.NODE_ENV === 'dev'
     ? process.env.DEV_SERVER_URL
     : process.env.SERVER_URL
 
-const OCI_FOLDER = process.env.MODE_ENV === 'dev'
+const OCI_FOLDER = process.env.NODE_ENV === 'dev'
     ? process.env.DEV_OCI_FOLDER
     : process.env.OCI_FOLDER
 

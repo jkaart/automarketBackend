@@ -1,0 +1,4 @@
+GET http://localhost:3001/api/user/674eda5ba83bc9d4ebc0457e
+
+###
+GET http://localhost:3001/api/user/674f04b146ff252c1b4fe8a4
