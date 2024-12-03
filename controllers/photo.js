@@ -5,7 +5,7 @@ const config = require('../utils/config')
 photoRouter.get('/:fileName', async (request, response) => {
     const { fileName } = request.params
 
-    const { data } = await axios.get(`${config.OCI_URI}/${fileName}`, { responseType: "stream" })
+    const { data } = await axios.get(`${config.OCI_URI}/o/${config.OCI_FOLDER}/${fileName}`, { responseType: "stream" })
     data.pipe(response)
 })
 

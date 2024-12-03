@@ -17,7 +17,7 @@ const middleware = require('./utils/middleware')
 mongoose.set('strictQuery', false)
 
 logger.info('connecting to', config.MONGODB_URI)
-logger.info('Oracle object storage', config.OCI_URI)
+logger.info('Oracle object storage', `${config.OCI_URI}/o/${config.OCI_FOLDER}`)
 
 mongoose.connect(config.MONGODB_URI)
     .then(() => {
