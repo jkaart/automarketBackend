@@ -94,7 +94,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
         const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
         const newFileName = uuidv4() + orgFileExt
         storedFileNames.push(newFileName)
-        const result = await axios.put(`${config.OCI_URI}/o/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
+        const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
             {
                 headers: {
                     'Content-Type': file.mimetype,
