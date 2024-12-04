@@ -23,6 +23,14 @@
     {
       "name": "Items",
       "description": "All announcements endpoints"
+    },
+    {
+      "name": "Users",
+      "description": "Users endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User profile endpoints"
     }
   ],
   "paths": {
@@ -224,6 +232,11 @@
     },
     "/api/photo/{fileName}": {
       "get": {
+        "tags": [
+          "Item",
+          "Items"
+        ],
+        "summary": "Announcement photos download",
         "description": "",
         "parameters": [
           {
@@ -244,6 +257,10 @@
     },
     "/api/registration/": {
       "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "User registration",
         "description": "",
         "responses": {
           "201": {
@@ -277,6 +294,10 @@
     },
     "/api/users/": {
       "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "All users profile data",
         "description": "",
         "responses": {
           "200": {
@@ -290,6 +311,10 @@
     },
     "/api/user/{id}": {
       "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Single user profile data",
         "description": "",
         "parameters": [
           {
@@ -311,19 +336,13 @@
         }
       }
     },
-    "/api/message/{recipientId}": {
+    "/api/message/": {
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "recipientId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+        "tags": [
+          "User"
         ],
+        "summary": "Messages between users",
+        "description": "",
         "responses": {
           "200": {
             "description": "OK"
@@ -342,6 +361,12 @@
                     "example": "any"
                   },
                   "userId": {
+                    "example": "any"
+                  },
+                  "recipientUserId": {
+                    "example": "any"
+                  },
+                  "announcementId": {
                     "example": "any"
                   }
                 }
@@ -439,6 +464,29 @@
                     "example": "binary"
                   }
                 }
+              }
+            }
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          },
+          "password": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "string"
               }
             }
           }

@@ -27,8 +27,8 @@ const carSchema = mongoose.Schema({
         require: true
     },
     onSale: {
-        type:Boolean,
-        default:true
+        type: Boolean,
+        default: true
     },
     description: String,
     photoFileNames: Array,

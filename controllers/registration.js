@@ -3,6 +3,10 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 registrationRouter.post('/', async (request, response) => {
+    /*@swagger
+    #swagger.tags = ['Users']
+    #swagger.summary = "User registration"
+    */
     const { username, password } = request.body
     if (!password) {
         return response.status(400).json({ error: 'Password missing' })
