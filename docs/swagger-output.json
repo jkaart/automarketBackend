@@ -113,6 +113,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
         "requestBody": {
@@ -356,26 +359,19 @@
         }
       }
     },
-    "/api/user/{id}": {
+    "/api/user/": {
       "get": {
         "tags": [
           "User"
         ],
         "summary": "Single user profile data",
         "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
