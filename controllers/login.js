@@ -5,16 +5,16 @@ const User = require('../models/user')
 
 loginRouter.post('/', async (request, response) => {
     /*@swagger
-    @swagger.tags = ['Users']
-    @swagger.summary = 'Users login endpoint'
-    @swagger.responses[200] = {
-        description: 'Responses user login details inn JSONWebToken'
+    #swagger.tags = ['Users']
+    #swagger.summary = 'Users login endpoint'
+    #swagger.responses[200] = {
+        description: 'Responses user login details in JSONWebToken',
         content: {
             'application/json': {
                 schema: {
                     type: 'object',
                     properties: {
-                        token: {type: 'string', example:'eyJhbGciplJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RpIiwicm9sZeI6InVzZXIiLCJpZCI6xjY3NTAxYjMzODAxNjU4MDliMjUxMzRlNSIsImlhdCI6MTczMzMwMzcwMSwiZXhwIjoxNzMzMzA3MzAxfQ.aLJeXX_VINMwL1i_n9ad0OOJflObUTZHbzQiljt01Jw'}
+                        token: {type: 'string', example:'eyJhbGciplJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RpIiwicm9sZeI6InVzZXIiLCJpZCI6xjY3NTAxYjMzODAxNjU4MDliMjUxMzRlNSIsImlhdCI6MTczMzMwMzcwMSwiZXhwIjoxNzMzMzA3MzAxfQ.aLJeXX_VINMwL1i_n9ad0OOJflObUTZHbzQiljt01Jw'},
                     }
                 }
             }
