@@ -10,6 +10,7 @@ const swaggerDocs = require('./docs/swagger-output.json')
 const itemsRouter = require('./controllers/items')
 const itemRouter = require('./controllers/item')
 const photoRouter = require('./controllers/photo')
+const loginRouter = require('./controllers/login')
 const registrationRouter = require('./controllers/registration')
 const usersRouter = require('./controllers/users')
 const userRouter = require('./controllers/user')
@@ -39,6 +40,8 @@ app.use('/api/item', itemRouter)
 app.use('/api/photo', photoRouter)
 
 app.use('/api/registration', registrationRouter)
+app.use('/api/login', loginRouter)
+
 app.use('/api/users', usersRouter)
 app.use('/api/user', userRouter)
 
