@@ -6,6 +6,7 @@ const mongoose = require('mongoose')
 const swaggerUi = require('swagger-ui-express')
 const passport = require('passport')
 const { jwtStrategy } = require('./utils/passport')
+const cors = require('cors')
 
 const swaggerDocs = require('./docs/swagger-output.json')
 
@@ -33,7 +34,7 @@ mongoose.connect(config.MONGODB_URI)
     .catch((error) => {
         logger.error('error connection to MongoDB:', error.message)
     })
-
+app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)
 passport.use('jwt', jwtStrategy)
