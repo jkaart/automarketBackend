@@ -6,9 +6,7 @@ const MONGODB_URI = process.env.NODE_ENV === 'test'
     ? process.env.TEST_MONGODB_URI
     : process.env.MONGODB_URI
 
-const OCI_URI = process.env.NODE_ENV === 'dev'
-    ? process.env.DEV_OCI_URI
-    : process.env.OCI_URI
+const OCI_URI = process.env.OCI_URI
 
 const SERVER_URL = process.env.NODE_ENV === 'dev'
     ? process.env.DEV_SERVER_URL
