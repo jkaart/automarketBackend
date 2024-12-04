@@ -7,14 +7,13 @@ const doc = {
     },
     servers: [
         {
-            url: 'http://localhost:3001',
-            description: ''
+            url: "https://automarketbackend.onrender.com",
+            description: 'Production server'
         },
         {
-            url: "https://automarketbackend.onrender.com",
-            description: ''
-        }
-
+            url: 'http://localhost:3001',
+            description: 'Testing server'
+        },
     ],
     tags: [
         {
