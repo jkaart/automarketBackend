@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/message/674f04b146ff252c1b4fe8a4
+POST http://localhost:3001/api/message/674f82280f3e0bbca8722b6b
 Content-Type: application/json
 
 {
-    "userId": "674f04bd46ff252c1b4fe8a6",
-    "message": "Test message 2"
+    "userId": "674f82370f3e0bbca8722b6d",
+    "message": "Test message"
 }

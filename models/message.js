@@ -6,9 +6,19 @@ const messageSchema = mongoose.Schema({
         required: true
     },
     date: Date,
-    user: {
+    recipientUser: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true,
+    },
+    senderUser: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
+    announcement: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Car'
     }
 })
 

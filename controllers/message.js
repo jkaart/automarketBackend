@@ -2,9 +2,13 @@ const messageRouter = require('express').Router()
 const Message = require('../models/message')
 const User = require('../models/user')
 
-messageRouter.post('/:recipientId', async (request, response) => {
-    const { recipientId } = request.params
-    const { message, userId } = request.body
+messageRouter.post('/', async (request, response) => {
+     /*@swagger
+    #swagger.tags = ['User']
+    #swagger.summary = 'Messages between users'
+    */
+
+    const { message, userId, recipientUserId, announcementId } = request.body
 
     if (!message || message.length === 0) {
         return response.status(400).json({ error: 'Content missing' })
@@ -13,22 +17,25 @@ messageRouter.post('/:recipientId', async (request, response) => {
         return response.status(400).json({ error: 'UserId missing' })
     }
 
-    const recipient = await User.findOne({ '_id': recipientId })
-    const sender = await User.findOne({ '_id': userId })
+    const recipientUser = await User.findOne({ '_id': recipientUserId})
+    const senderUser = await User.findOne({ '_id': userId })
 
-    if (!recipient) {
+    if (!recipientUser) {
         return response.status(400).json({ error: 'Recipient user not found' })
     }
 
     const msg = new Message({
         message,
-        user: userId,
-        recipientUser: recipientId
+        senderUser: userId,
+        recipientUser: recipientUserId,
+        announcementId,
     })
     const savedMessage = await msg.save()
 
-    recipient.receivedMessages = recipient.receivedMessages.concat(savedMessage._id)
-    await recipient.save()
+    recipientUser.receivedMessages = recipientUser.receivedMessages.concat(savedMessage._id)
+    senderUser.sendedMessages = senderUser.sendedMessages.concat(savedMessage._id)
+    await recipientUser.save()
+    await senderUser.save()
 
     response.status(200).json({ savedMessage, message: 'Message saved and sended' })
 })

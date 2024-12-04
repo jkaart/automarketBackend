@@ -24,6 +24,14 @@ const doc = {
         {
             name: 'Items',
             description: 'All announcements endpoints'
+        },
+        {
+            name: 'Users',
+            description: 'Users endpoints'
+        },
+        {
+            name: 'User',
+            description: 'User profile endpoints'
         }
     ],
     components: {
@@ -43,6 +51,10 @@ const doc = {
                         format: 'binary'
                     }
                 }
+            },
+            User: {
+                name: { type: 'string'},
+                password: { type: 'string'},
             }
         }
     }
