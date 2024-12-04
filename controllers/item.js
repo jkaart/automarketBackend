@@ -4,6 +4,7 @@ const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
 const Car = require('../models/car')
+const { auth } = require('../utils/middleware')
 
 const checkFileTypes = (request, file, next) => {
     const allowedMIMETypes = ['image/jpeg', 'image/jpg']
@@ -22,7 +23,7 @@ const upload =
         fileFilter: checkFileTypes
     })
 
-itemRouter.post('/', upload.array('photos', 3), async (request, response) => {
+itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) => {
     /*@swagger
     #swagger.tags = ['Item']
     #swagger.summary = "Save a new car announcement"

@@ -1,4 +1,5 @@
 const logger = require('./logger')
+const passport = require('passport')
 
 const requestLogger = (request, response, next) => {
     logger.info('Method:', request.method)
@@ -29,8 +30,31 @@ const errorHandler = (error, request, response, next) => {
     next(error)
 }
 
+const auth = (request, response, next) => {
+    passport.authenticate('jwt', { session: false }, (error, user, info) => {
+        if (error) {
+            return next(error)
+        }
+        if (!user) {
+            return response.status(401).json({ error: 'Unauthorized' })
+        }
+        request.user = user
+        next()
+    })(request, response, next)
+}
+
+const checkUserRole = (requiredRoles) => (request, response, next) => {
+    if (request.user && requiredRoles.includes(request.user.role)) {
+        return next()
+    }
+    return response.status(403).json({ message: 'Access denied. No permissions.' })
+
+}
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
+    auth,
+    checkUserRole
 }

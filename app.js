@@ -4,6 +4,8 @@ const app = express()
 require('express-async-errors')
 const mongoose = require('mongoose')
 const swaggerUi = require('swagger-ui-express')
+const passport = require('passport')
+const { jwtStrategy } = require('./utils/passport')
 
 const swaggerDocs = require('./docs/swagger-output.json')
 
@@ -34,6 +36,7 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(express.json())
 app.use(middleware.requestLogger)
+passport.use('jwt', jwtStrategy)
 
 app.use('/api/items', itemsRouter)
 app.use('/api/item', itemRouter)
