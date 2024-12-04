@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/message/674f82280f3e0bbca8722b6b
+Content-Type: application/json
+
+{
+    "userId": "674f82370f3e0bbca8722b6d",
+    "message": "Test message"
+}

@@ -93,7 +93,7 @@ itemRouter.post('/', upload.array('photos', 3), async (request, response) => {
         const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
         const newFileName = uuidv4() + orgFileExt
         storedFileNames.push(newFileName)
-        const result = await axios.put(`${config.OCI_URI}/${newFileName}`, file.buffer,
+        const result = await axios.put(`${config.OCI_URI}/o/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
             {
                 headers: {
                     'Content-Type': file.mimetype,
@@ -152,6 +152,8 @@ itemRouter.delete('/:id', async (request, response) => {
     if (!deletedCar) {
         return response.statusCode(404).end()
     }
+
+    // TODO: Photo deleting from oracle object storage need fixing
     // const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
     //     const result = await axios.delete(`${config.OCI_URI}/${fileName}`)
 

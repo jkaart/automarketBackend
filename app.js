@@ -10,6 +10,11 @@ const swaggerDocs = require('./docs/swagger-output.json')
 const itemsRouter = require('./controllers/items')
 const itemRouter = require('./controllers/item')
 const photoRouter = require('./controllers/photo')
+const loginRouter = require('./controllers/login')
+const registrationRouter = require('./controllers/registration')
+const usersRouter = require('./controllers/users')
+const userRouter = require('./controllers/user')
+const messageRouter = require('./controllers/message')
 
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
@@ -17,7 +22,7 @@ const middleware = require('./utils/middleware')
 mongoose.set('strictQuery', false)
 
 logger.info('connecting to', config.MONGODB_URI)
-logger.info('Oracle object storage', config.OCI_URI)
+logger.info('Oracle object storage', `${config.OCI_URI}/o/${config.OCI_FOLDER}`)
 
 mongoose.connect(config.MONGODB_URI)
     .then(() => {
@@ -33,6 +38,14 @@ app.use(middleware.requestLogger)
 app.use('/api/items', itemsRouter)
 app.use('/api/item', itemRouter)
 app.use('/api/photo', photoRouter)
+
+app.use('/api/registration', registrationRouter)
+app.use('/api/login', loginRouter)
+
+app.use('/api/users', usersRouter)
+app.use('/api/user', userRouter)
+
+app.use('/api/message', messageRouter)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
