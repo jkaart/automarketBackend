@@ -248,12 +248,21 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Requested photo filename"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Requested photo",
+            "content": {
+              "image/jpeg": {
+                "type": "object",
+                "properties": {
+                  "type": "file"
+                }
+              }
+            }
           }
         }
       }

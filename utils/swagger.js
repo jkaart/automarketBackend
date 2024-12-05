@@ -36,13 +36,13 @@ const doc = {
     components: {
         schemas: {
             Item: {
-                mark: { type: 'string'},
-                model: { type: 'string'},
-                fuelType: { type: 'string'},
-                mileage: { type: 'number'},
-                gearBoxType: { type: 'string'},
-                price: { type: 'number'},
-                description: { type: 'string'},
+                mark: { type: 'string' },
+                model: { type: 'string' },
+                fuelType: { type: 'string' },
+                mileage: { type: 'number' },
+                gearBoxType: { type: 'string' },
+                price: { type: 'number' },
+                description: { type: 'string' },
                 photos: {
                     type: 'array',
                     items: {
@@ -52,8 +52,14 @@ const doc = {
                 }
             },
             User: {
-                name: { type: 'string'},
-                password: { type: 'string'},
+                name: { type: 'string' },
+                password: { type: 'string' },
+            }
+        },
+        securitySchemes: {
+            bearerAuth: {
+                type: 'http',
+                scheme: 'bearer'
             }
         }
     }
