@@ -1,10 +1,10 @@
 const photoRouter = require('express').Router()
 const axios = require('axios')
 const config = require('../utils/config')
-const { pipeline } = require("node:stream/promises");
+const { pipeline } = require('node:stream/promises')
 
 photoRouter.get('/:fileName', async (request, response) => {
-    /*@swagger
+  /*@swagger
    #swagger.tags = ['Item']
    #swagger.summary = 'Announcement photos download'
    #swagger.parameters['fileName'] = {
@@ -22,12 +22,12 @@ photoRouter.get('/:fileName', async (request, response) => {
         }
    }
    */
-    const { fileName } = request.params
+  const { fileName } = request.params
 
-    const { data } = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: "stream" })
+  const { data } = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: 'stream' })
 
 
-    await pipeline(data, response)
+  await pipeline(data, response)
 })
 
 module.exports = photoRouter
