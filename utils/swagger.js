@@ -59,7 +59,10 @@ const doc = {
     securitySchemes: {
       bearerAuth: {
         type: 'http',
-        scheme: 'bearer'
+        scheme: 'bearer',
+        in: 'header',
+        name: 'Authorization',
+        description: 'Bearer Token',
       }
     }
   }

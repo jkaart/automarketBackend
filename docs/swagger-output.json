@@ -101,6 +101,11 @@
                       "example": "Hyvä auto",
                       "description": "Announcement description"
                     },
+                    "onSale": {
+                      "type": "boolean",
+                      "example": "true",
+                      "description": "Item sale status"
+                    },
                     "photos": {
                       "description": "Car photo urls",
                       "type": "array",
@@ -565,7 +570,10 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Bearer Token"
       }
     }
   }

@@ -72,6 +72,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
                         gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
                         price: { type: 'number', example: 10000, description: 'Car price' },
                         description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
+                        onSale: {type: 'boolean', example: 'true', description:'Item sale status'},
                         photos: {
                             description: 'Car photo urls',
                             type: 'array',

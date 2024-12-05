@@ -30,7 +30,7 @@ const userSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Message'
   }],
-  registrationDate: Date,
+  registrationDate: { type: Date, default: Date.now },
 
 })
 

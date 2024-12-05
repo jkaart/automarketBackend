@@ -19,7 +19,8 @@ const messageSchema = mongoose.Schema({
   announcement: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Car'
-  }
+  },
+  sendDate: { type: Date, default: Date.now }
 })
 
 messageSchema.set('toJSON', {
