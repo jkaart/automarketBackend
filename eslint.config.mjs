@@ -36,6 +36,7 @@ export default [
         'error',
         'never'
       ],
+      'eqeqeq': 'error',
     },
   },
 ]

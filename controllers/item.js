@@ -25,37 +25,40 @@ const upload =
 
 itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Item']
-    #swagger.summary = "Save a new car announcement"
-    #swagger.requestBody = {
-        required: true,
-        content: {
-            "multipart/form-data": {
-                schema: {
-                    type: 'object',
-                    properties: {
-                        mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
-                        model: { type: 'string', example: 'V70', description: 'Car model' },
-                        fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
-                        mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
-                        gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
-                        price: { type: 'number', example: 10000, description: 'Car price' },
-                        description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
-                        photos: {
-                            description: 'Car photos',
-                            type: 'array',
-                            items: {
-                                type: 'string',
-                                format: 'binary'
-                            }
-                        }
-                    },
-                    required: ['mark','model', 'fuelType', 'mileage', 'gearBoxType', 'price', 'photos']
-                }
-            }
-        }
-    }
-    #swagger.responses[201] = {
+      #swagger.tags = ['Item']
+      #swagger.summary = "Save a new car announcement"
+      #swagger.security = [{
+          "bearerAuth": []
+      }]
+      #swagger.requestBody = {
+          required: true,
+          content: {
+              "multipart/form-data": {
+                  schema: {
+                      type: 'object',
+                      properties: {
+                          mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
+                          model: { type: 'string', example: 'V70', description: 'Car model' },
+                          fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
+                          mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
+                          gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
+                          price: { type: 'number', example: 10000, description: 'Car price' },
+                          description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
+                          photos: {
+                              description: 'Car photos',
+                              type: 'array',
+                              items: {
+                                  type: 'string',
+                                  format: 'binary'
+                              }
+                          }
+                      },
+                      required: ['mark','model', 'fuelType', 'mileage', 'gearBoxType', 'price']
+                  }
+              }
+          }
+      }
+      #swagger.responses[201] = {
         description: "Response back saved car, id and message",
         content: {
             "application/json": {
@@ -70,24 +73,23 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
                         price: { type: 'number', example: 10000, description: 'Car price' },
                         description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
                         photos: {
-                            description: 'Car photos',
+                            description: 'Car photo urls',
                             type: 'array',
-                            items: {
-                                type: 'string',
-                                format: 'binary'
-                            }
+                            format:'uri',
+                            example: ['https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg']
+
                         }
-                    }
-                },
-            }           
-        }
-    }
-    */
+                      }
+                  },
+              }           
+          }
+      }
+      */
   const { mark, model, fuelType, mileage, gearBoxType, price, description } = request.body
   /* if (!request.files) {
-        return response.status(422).json('Photos missing')
-    }
- */
+          return response.status(422).json('Photos missing')
+      }
+   */
   const storedFileNames = []
 
   const uploadResponses = request.files.map(async file => {
@@ -128,9 +130,9 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
 
 itemRouter.get('/:id', async (request, response) => {
   /*
-        #swagger.tags = ['Item']
-        #swagger.summary = 'Get individual car announcement'
-    */
+          #swagger.tags = ['Item']
+          #swagger.summary = 'Get individual car announcement'
+      */
 
   const itemId = request.params.id
   const car = await Car.findById(itemId)
@@ -144,9 +146,9 @@ itemRouter.get('/:id', async (request, response) => {
 
 itemRouter.delete('/:id', async (request, response) => {
   /*
-        #swagger.tags = ['Item']
-        #swagger.summary = 'Delete individual car announcement'
-    */
+          #swagger.tags = ['Item']
+          #swagger.summary = 'Delete individual car announcement'
+      */
 
   const itemId = request.params.id
   const deletedCar = await Car.findByIdAndDelete(itemId)

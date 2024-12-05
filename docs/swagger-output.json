@@ -102,12 +102,13 @@
                       "description": "Announcement description"
                     },
                     "photos": {
-                      "description": "Car photos",
+                      "description": "Car photo urls",
                       "type": "array",
-                      "items": {
-                        "type": "string",
-                        "format": "binary"
-                      }
+                      "format": "uri",
+                      "example": [
+                        "https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg",
+                        "https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg"
+                      ]
                     }
                   }
                 }
@@ -118,6 +119,11 @@
             "description": "Unauthorized"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -175,8 +181,7 @@
                   "fuelType",
                   "mileage",
                   "gearBoxType",
-                  "price",
-                  "photos"
+                  "price"
                 ]
               }
             }
@@ -236,8 +241,7 @@
     "/api/photo/{fileName}": {
       "get": {
         "tags": [
-          "Item",
-          "Items"
+          "Item"
         ],
         "summary": "Announcement photos download",
         "description": "",
@@ -362,10 +366,18 @@
           "200": {
             "description": "OK"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/user/": {
@@ -385,7 +397,12 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/api/message/": {
@@ -543,6 +560,12 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }
