@@ -94,8 +94,8 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
   const storedFileNames = []
 
   const uploadResponses = request.files.map(async file => {
-    const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
-    const newFileName = uuidv4() + orgFileExt
+    //const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
+    const newFileName = uuidv4() + '.jpg'
     storedFileNames.push(newFileName)
     const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
       {
