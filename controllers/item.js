@@ -2,6 +2,9 @@ const itemRouter = require('express').Router()
 const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
+const sharp = require('sharp')
+const { pipeline } = require('node:stream/promises')
+const { PassThrough } = require('stream')
 const config = require('../utils/config')
 const Car = require('../models/car')
 const { auth } = require('../utils/middleware')
@@ -102,14 +105,17 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     //const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
     const newFileName = uuidv4() + '.jpg'
     storedFileNames.push(newFileName)
-    const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
-      {
-        headers: {
-          'Content-Type': file.mimetype,
-          'Content-Length': file.size,
-        }
-      }
-    )
+
+    const output = await sharp(file.buffer)
+      .resize({ width: 1024 })
+      .toBuffer()
+
+    const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, output, {
+      headers: {
+        'Content-Type': 'image/jpeg',
+      },
+    })
+
   })
 
   Promise.all(uploadResponses).then(async () => {
