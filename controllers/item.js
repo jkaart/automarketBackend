@@ -106,7 +106,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     const newFileName = uuidv4() + '.jpg'
     storedFileNames.push(newFileName)
 
-    const output = await sharp(file.buffer)
+    /* const output = await sharp(file.buffer)
       .resize({ width: 1024 })
       .toBuffer()
 
@@ -114,6 +114,16 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       headers: {
         'Content-Type': 'image/jpeg',
       },
+    }) */
+
+      const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
+        {
+          headers: {
+            'Content-Type': file.mimetype,
+            'Content-Length': file.size,
+          }
+        }
+      )
     })
 
   })

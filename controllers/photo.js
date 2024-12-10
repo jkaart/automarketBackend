@@ -32,13 +32,15 @@ photoRouter.get('/:fileName', async (request, response) => {
 
   const res = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: responseType })
 
-  if (orgFileName.startsWith('thumb_')) {
-    const buffer = Buffer.from(res.data, 'binary')
-    const output = sharp(buffer)
-      .resize({ width: 300 })
-    return await pipeline(output, response)
-  }
-  await pipeline(res.data, response)
+  const width = orgFileName.startsWith('thumb_')
+    ? 300
+    : 1024
+  
+  const buffer = Buffer.from(res.data, 'binary')
+  const output = sharp(buffer)
+    .resize({ width })
+  
+  return await pipeline(output, response)
 })
 
 module.exports = photoRouter
