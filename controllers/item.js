@@ -116,17 +116,16 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       },
     }) */
 
-      const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
-        {
-          headers: {
-            'Content-Type': file.mimetype,
-            'Content-Length': file.size,
-          }
+    const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
+      {
+        headers: {
+          'Content-Type': file.mimetype,
+          'Content-Length': file.size,
         }
-      )
-    })
-
+      }
+    )
   })
+
 
   Promise.all(uploadResponses).then(async () => {
     const car = new Car({
