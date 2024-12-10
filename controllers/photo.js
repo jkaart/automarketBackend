@@ -3,6 +3,7 @@ const axios = require('axios')
 const config = require('../utils/config')
 const { pipeline } = require('node:stream/promises')
 const sharp = require('sharp')
+const { Stream } = require('node:stream')
 
 photoRouter.get('/:fileName', async (request, response) => {
   /*@swagger
@@ -26,20 +27,20 @@ photoRouter.get('/:fileName', async (request, response) => {
   const orgFileName = request.params.fileName
   const fileName = orgFileName.replace('thumb_', '')
 
-  const responseType = orgFileName.startsWith('thumb_')
-    ? 'arraybuffer'
-    : 'stream'
+  // const responseType = orgFileName.startsWith('thumb_')
+  //   ? 'arraybuffer'
+  //   : 'stream'
 
-  const res = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: responseType })
+  const res = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: 'stream' })
 
   const width = orgFileName.startsWith('thumb_')
     ? 300
     : 1024
-  
+
   const buffer = Buffer.from(res.data, 'binary')
   const output = sharp(buffer)
-    .resize({ width })
-  
+    .resize({ width: width })
+
   return await pipeline(output, response)
 })
 
