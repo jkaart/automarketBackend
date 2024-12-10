@@ -31,7 +31,7 @@ photoRouter.get('/:fileName', async (request, response) => {
   //   ? 'arraybuffer'
   //   : 'stream'
 
-  const res = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: 'stream' })
+  const res = await axios.get(`${config.OCI_URI}/${config.OCI_FOLDER}/${fileName}`, { responseType: 'arraybuffer' })
 
   const width = orgFileName.startsWith('thumb_')
     ? 300
