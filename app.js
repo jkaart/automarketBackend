@@ -34,6 +34,7 @@ mongoose.connect(config.MONGODB_URI)
   .catch((error) => {
     logger.error('error connection to MongoDB:', error.message)
   })
+app.use(require('express-status-monitor')())
 app.use(cors())
 app.use(express.json())
 app.use(middleware.requestLogger)

@@ -66,6 +66,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "675613089b7bd846447b9d0c",
+                      "description": "Item id"
+                    },
                     "mark": {
                       "type": "string",
                       "example": "Volvo",
@@ -106,13 +111,27 @@
                       "example": "true",
                       "description": "Item sale status"
                     },
-                    "photos": {
-                      "description": "Car photo urls",
+                    "createdDate": {
+                      "type": "date",
+                      "example": "2024-12-09T12:00:00.000Z",
+                      "description": "Date when item is `published`"
+                    },
+                    "photoURLs": {
+                      "description": "Car full size photo urls",
                       "type": "array",
                       "format": "uri",
                       "example": [
                         "https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg",
                         "https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg"
+                      ]
+                    },
+                    "thumbnailURLs": {
+                      "description": "Car thumbnail photo urls",
+                      "type": "array",
+                      "format": "uri",
+                      "example": [
+                        "https://automarketbackend.onrender.com/api/photo/thumb_7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg",
+                        "https://automarketbackend.onrender.com/api/photo/thumb_7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg"
                       ]
                     }
                   }
@@ -213,7 +232,84 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Response requested car",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "675613089b7bd846447b9d0c",
+                      "description": "Item id"
+                    },
+                    "mark": {
+                      "type": "string",
+                      "example": "Volvo",
+                      "description": "Car mark"
+                    },
+                    "model": {
+                      "type": "string",
+                      "example": "V70",
+                      "description": "Car model"
+                    },
+                    "fuelType": {
+                      "type": "string",
+                      "example": "diesel",
+                      "description": "Car fuel type"
+                    },
+                    "mileage": {
+                      "type": "number",
+                      "example": 120000,
+                      "description": "Car mileage or odometer reading"
+                    },
+                    "gearBoxType": {
+                      "type": "string",
+                      "example": "manual",
+                      "description": "Car gear box type"
+                    },
+                    "price": {
+                      "type": "number",
+                      "example": 10000,
+                      "description": "Car price"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Hyvä auto",
+                      "description": "Announcement description"
+                    },
+                    "onSale": {
+                      "type": "boolean",
+                      "example": "true",
+                      "description": "Item sale status"
+                    },
+                    "createdDate": {
+                      "type": "date",
+                      "example": "2024-12-09T12:00:00.000Z",
+                      "description": "Date when item is `published`"
+                    },
+                    "photoURLs": {
+                      "description": "Car full size photo urls",
+                      "type": "array",
+                      "format": "uri",
+                      "example": [
+                        "https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg",
+                        "https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg"
+                      ]
+                    },
+                    "thumbnailURLs": {
+                      "description": "Car thumbnail photo urls",
+                      "type": "array",
+                      "format": "uri",
+                      "example": [
+                        "https://automarketbackend.onrender.com/api/photo/thumb_7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg",
+                        "https://automarketbackend.onrender.com/api/photo/thumb_7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found"
@@ -239,6 +335,9 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }

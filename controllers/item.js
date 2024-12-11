@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
 const Car = require('../models/car')
 const { auth } = require('../utils/middleware')
+const getOCIAuthHeaders = require('../utils/oci')
 
 const checkFileTypes = (request, file, next) => {
   const allowedMIMETypes = ['image/jpeg', 'image/jpg']
@@ -16,53 +17,23 @@ const checkFileTypes = (request, file, next) => {
 }
 
 const upload =
-    multer({
-      limits: {
-        fileSize: 1024 * 1024 * 1 // 1MB file size only
-      },
-      fileFilter: checkFileTypes
-    })
+  multer({
+    limits: {
+      fileSize: 1024 * 1024 * 1 // 1MB file size only
+    },
+    fileFilter: checkFileTypes
+  })
 
 itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) => {
   /*@swagger
-      #swagger.tags = ['Item']
-      #swagger.summary = "Save a new car announcement"
-      #swagger.security = [{
-          "bearerAuth": []
-      }]
-      #swagger.requestBody = {
-          required: true,
-          content: {
-              "multipart/form-data": {
-                  schema: {
-                      type: 'object',
-                      properties: {
-                          mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
-                          model: { type: 'string', example: 'V70', description: 'Car model' },
-                          fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
-                          mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
-                          gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
-                          price: { type: 'number', example: 10000, description: 'Car price' },
-                          description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
-                          photos: {
-                              description: 'Car photos',
-                              type: 'array',
-                              items: {
-                                  type: 'string',
-                                  format: 'binary'
-                              }
-                          }
-                      },
-                      required: ['mark','model', 'fuelType', 'mileage', 'gearBoxType', 'price']
-                  }
-              }
-          }
-      }
-      #swagger.responses[201] = {
-        description: "Response back saved car, id and message",
+    #swagger.tags = ['Item']
+    #swagger.summary = "Save a new car announcement"
+    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.requestBody = {
+        required: true,
         content: {
-            "application/json": {
-                schema: { 
+            "multipart/form-data": {
+                schema: {
                     type: 'object',
                     properties: {
                         mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
@@ -72,20 +43,55 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
                         gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
                         price: { type: 'number', example: 10000, description: 'Car price' },
                         description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
-                        onSale: {type: 'boolean', example: 'true', description:'Item sale status'},
                         photos: {
-                            description: 'Car photo urls',
+                            description: 'Car photos',
                             type: 'array',
-                            format:'uri',
-                            example: ['https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg']
-
+                            items: {
+                                type: 'string',
+                                format: 'binary'
+                            }
                         }
-                      }
-                  },
-              }           
+                    },
+                    required: ['mark','model', 'fuelType', 'mileage', 'gearBoxType', 'price']
+                }
+            }
+        }
+    }
+    #swagger.responses[201] = {
+      description: "Response back saved car, id and message",
+      content: {
+        'application/json': {
+          schema: { 
+            type: 'object',
+            properties: {
+              id: {type: 'string', example: '675613089b7bd846447b9d0c', description:'Item id'},
+              mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
+              model: { type: 'string', example: 'V70', description: 'Car model' },
+              fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
+              mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
+              gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
+              price: { type: 'number', example: 10000, description: 'Car price' },
+              description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
+              onSale: {type: 'boolean', example: 'true', description:'Item sale status'},
+              createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
+              photoURLs: {
+                description: 'Car full size photo urls',
+                type: 'array',
+                format:'uri',
+                example: ['https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg'],
+              },
+              thumbnailURLs: {
+                description: 'Car thumbnail photo urls',
+                type: 'array',
+                format:'uri',
+                example: ['https://automarketbackend.onrender.com/api/photo/thumb_7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/thumb_7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg'],
+              }
+            }
           }
+        }           
       }
-      */
+    }
+  */
   const { mark, model, fuelType, mileage, gearBoxType, price, description } = request.body
   /* if (!request.files) {
           return response.status(422).json('Photos missing')
@@ -97,6 +103,17 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     //const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
     const newFileName = uuidv4() + '.jpg'
     storedFileNames.push(newFileName)
+
+    /* const output = await sharp(file.buffer)
+      .resize({ width: 1024 })
+      .toBuffer()
+
+    const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, output, {
+      headers: {
+        'Content-Type': 'image/jpeg',
+      },
+    }) */
+
     const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
       {
         headers: {
@@ -106,6 +123,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       }
     )
   })
+
 
   Promise.all(uploadResponses).then(async () => {
     const car = new Car({
@@ -130,10 +148,44 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
 
 
 itemRouter.get('/:id', async (request, response) => {
-  /*
-          #swagger.tags = ['Item']
-          #swagger.summary = 'Get individual car announcement'
-      */
+  /*@swagger
+    #swagger.tags = ['Item']
+    #swagger.summary = 'Get individual car announcement'
+    #swagger.responses[200] = {
+      description: "Response requested car",
+      content: {
+        'application/json': {
+          schema: { 
+            type: 'object',
+            properties: {
+              id: {type: 'string', example: '675613089b7bd846447b9d0c', description:'Item id'},
+              mark: { type: 'string', example: 'Volvo', description: 'Car mark' },
+              model: { type: 'string', example: 'V70', description: 'Car model' },
+              fuelType: { type: 'string', example: 'diesel', description: 'Car fuel type' },
+              mileage: { type: 'number', example: 120000, description: 'Car mileage or odometer reading' },
+              gearBoxType: { type: 'string', example: 'manual', description: 'Car gear box type' },
+              price: { type: 'number', example: 10000, description: 'Car price' },
+              description: { type: 'string', example: 'Hyvä auto', description: 'Announcement description' },
+              onSale: {type: 'boolean', example: 'true', description:'Item sale status'},
+              createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
+              photoURLs: {
+                description: 'Car full size photo urls',
+                type: 'array',
+                format:'uri',
+                example: ['https://automarketbackend.onrender.com/api/photo/7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg'],
+              },
+              thumbnailURLs: {
+                description: 'Car thumbnail photo urls',
+                type: 'array',
+                format:'uri',
+                example: ['https://automarketbackend.onrender.com/api/photo/thumb_7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/thumb_7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg'],
+              }
+            }
+          }
+        }           
+      }
+    }
+  */
 
   const itemId = request.params.id
   const car = await Car.findById(itemId)
@@ -146,33 +198,27 @@ itemRouter.get('/:id', async (request, response) => {
 })
 
 itemRouter.delete('/:id', async (request, response) => {
-  /*
-          #swagger.tags = ['Item']
-          #swagger.summary = 'Delete individual car announcement'
-      */
+  /*@swagger
+    #swagger.tags = ['Item']
+    #swagger.summary = 'Delete individual car announcement'
+  */
 
   const itemId = request.params.id
   const deletedCar = await Car.findByIdAndDelete(itemId)
   if (!deletedCar) {
-    return response.statusCode(404).end()
+    return response.status(404).end()
   }
 
-  // TODO: Photo deleting from oracle object storage need fixing
-  // const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
-  //     const result = await axios.delete(`${config.OCI_URI}/${fileName}`)
+  const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
+    const objectName = `${config.OCI_FOLDER}/${fileName}`
+    const httpRequest = await getOCIAuthHeaders(objectName)
 
-  //     if (result.statusCode === 404) {
-  //         return
-  //     }
+    const result = await axios.delete(httpRequest.uri, { headers: Object.fromEntries(httpRequest.headers) })
+  })
 
-  // })
-
-  // Promise.all(deleteResponses).then(() => {
-  //     
-  // })
-
-  response.status(204).end()
-
+  Promise.all(deleteResponses).then(() => {
+    response.status(204).end()
+  })
 
 })
 
