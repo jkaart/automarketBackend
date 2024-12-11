@@ -2,12 +2,10 @@ const itemRouter = require('express').Router()
 const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
-const sharp = require('sharp')
-const { pipeline } = require('node:stream/promises')
-const { PassThrough } = require('stream')
 const config = require('../utils/config')
 const Car = require('../models/car')
 const { auth } = require('../utils/middleware')
+const getOCIAuthHeaders = require('../utils/oci')
 
 const checkFileTypes = (request, file, next) => {
   const allowedMIMETypes = ['image/jpeg', 'image/jpg']
@@ -200,33 +198,27 @@ itemRouter.get('/:id', async (request, response) => {
 })
 
 itemRouter.delete('/:id', async (request, response) => {
-  /*
-          #swagger.tags = ['Item']
-          #swagger.summary = 'Delete individual car announcement'
-      */
+  /*@swagger
+    #swagger.tags = ['Item']
+    #swagger.summary = 'Delete individual car announcement'
+  */
 
   const itemId = request.params.id
   const deletedCar = await Car.findByIdAndDelete(itemId)
   if (!deletedCar) {
-    return response.statusCode(404).end()
+    return response.status(404).end()
   }
 
-  // TODO: Photo deleting from oracle object storage need fixing
-  // const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
-  //     const result = await axios.delete(`${config.OCI_URI}/${fileName}`)
+  const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
+    const objectName = `${config.OCI_FOLDER}/${fileName}`
+    const httpRequest = await getOCIAuthHeaders(objectName)
 
-  //     if (result.statusCode === 404) {
-  //         return
-  //     }
+    const result = await axios.delete(httpRequest.uri, { headers: Object.fromEntries(httpRequest.headers) })
+  })
 
-  // })
-
-  // Promise.all(deleteResponses).then(() => {
-  //     
-  // })
-
-  response.status(204).end()
-
+  Promise.all(deleteResponses).then(() => {
+    response.status(204).end()
+  })
 
 })
 
