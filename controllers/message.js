@@ -1,24 +1,25 @@
 const messageRouter = require('express').Router()
 const Message = require('../models/message')
 const User = require('../models/user')
+const { auth } = require('../utils/middleware')
 
-messageRouter.post('/', async (request, response) => {
+messageRouter.post('/', auth, async (request, response) => {
   /*@swagger
     #swagger.tags = ['User']
     #swagger.summary = 'Messages between users'
     */
 
-  const { message, userId, recipientUserId, announcementId } = request.body
+  const senderUser = request.user
+  const { message, recipientUserId, announcementId } = request.body
 
   if (!message || message.length === 0) {
     return response.status(400).json({ error: 'Content missing' })
   }
-  if (!userId) {
-    return response.status(400).json({ error: 'UserId missing' })
+  if (!recipientUserId) {
+    return response.status(400).json({ error: 'recipientUserId missing' })
   }
 
-  const recipientUser = await User.findOne({ '_id': recipientUserId})
-  const senderUser = await User.findOne({ '_id': userId })
+  const recipientUser = await User.findById(recipientUserId)
 
   if (!recipientUser) {
     return response.status(400).json({ error: 'Recipient user not found' })
@@ -26,7 +27,7 @@ messageRouter.post('/', async (request, response) => {
 
   const msg = new Message({
     message,
-    senderUser: userId,
+    senderUser: senderUser.id,
     recipientUser: recipientUserId,
     announcementId,
   })

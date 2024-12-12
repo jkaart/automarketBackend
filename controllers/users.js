@@ -1,8 +1,8 @@
 const usersRouter = require('express').Router()
 const User = require('../models/user')
-const { auth } = require('../utils/middleware')
+const { auth, checkUserRole } = require('../utils/middleware')
 
-usersRouter.get('/', auth, async (request, response) => {
+usersRouter.get('/', auth, checkUserRole(['admin']), async (request, response) => {
   /*@swagger
     #swagger.tags = ['Users']
     #swagger.summary = 'All users profile data'

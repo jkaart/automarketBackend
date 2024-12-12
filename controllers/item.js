@@ -4,7 +4,7 @@ const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
 const Car = require('../models/car')
-const { auth } = require('../utils/middleware')
+const { auth, checkUserRole } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
 const checkFileTypes = (request, file, next) => {
@@ -92,6 +92,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       }
     }
   */
+  const user = request.user
   const { mark, model, fuelType, mileage, gearBoxType, price, description } = request.body
   /* if (!request.files) {
           return response.status(422).json('Photos missing')
@@ -134,10 +135,13 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       gearBoxType,
       price,
       description,
-      photoFileNames: storedFileNames
+      photoFileNames: storedFileNames,
+      user: user.id
     })
 
     const savedCar = await car.save()
+    user.announcements = user.announcements.concat(savedCar._id)
+    await user.save()
 
     response
       .status(201)
@@ -197,7 +201,7 @@ itemRouter.get('/:id', async (request, response) => {
 
 })
 
-itemRouter.delete('/:id', async (request, response) => {
+itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, response) => {
   /*@swagger
     #swagger.tags = ['Item']
     #swagger.summary = 'Delete individual car announcement'

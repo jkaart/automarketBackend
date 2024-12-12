@@ -32,7 +32,14 @@ const carSchema = mongoose.Schema({
   },
   description: String,
   photoFileNames: Array,
-  createdDate: { type: Date, default: Date.now }
+  createdDate: {
+    type: Date,
+    default: Date.now
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }
 })
 
 carSchema.set('toJSON', {
