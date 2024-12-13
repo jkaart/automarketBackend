@@ -17,7 +17,7 @@ userRouter.get('/', auth, async (request, response) => {
 
 })
 
-userRouter.delete('/:id', async (request, response) => {
+userRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, response) => {
   /*@swagger
     #swagger.tags = ['User']
     #swagger.summary = 'Delete single user profile and all user announcements'
