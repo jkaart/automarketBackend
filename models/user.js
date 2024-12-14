@@ -34,6 +34,12 @@ const userSchema = mongoose.Schema({
 
 })
 
+userSchema.pre('findByIdAndDelete', async (doc) => {
+  mongoose.model('Item').deleteMany({ user: doc._id })
+  mongoose.model('Message').deleteMany({ senderUser: doc._id })
+  mongoose.model('Message').deleteMany({ recipientUser: doc._id })
+})
+
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
