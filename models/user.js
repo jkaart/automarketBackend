@@ -14,9 +14,13 @@ const userSchema = mongoose.Schema({
     type: String,
     default: 'user'
   },
-  announcements: [{
+  sellAnnouncements: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Car'
+  }],
+  buyAnnouncements: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ByeCar'
   }],
   interestedAnnouncements: [{
     type: mongoose.Schema.Types.ObjectId,

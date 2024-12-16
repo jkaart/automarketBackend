@@ -3,7 +3,7 @@ const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
-const Car = require('../models/car')
+const { Car, BuyCar } = require('../models/car')
 const { auth, checkUserRole } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
@@ -85,7 +85,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
                 type: 'array',
                 format:'uri',
                 example: ['https://automarketbackend.onrender.com/api/photo/thumb_7cca8e54-591f-4698-bca4-d48cc47e89f2.jpg', 'https://automarketbackend.onrender.com/api/photo/thumb_7f01860c-42b0-40c1-8ec5-432a9477f3bf.jpg'],
-              }
+              },
             }
           }
         }           
@@ -140,7 +140,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     })
 
     const savedCar = await car.save()
-    user.announcements = user.announcements.concat(savedCar._id)
+    user.sellAnnouncements = user.sellAnnouncements.concat(savedCar._id)
     await user.save()
 
     response
@@ -149,7 +149,26 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
   })
 })
 
+itemRouter.post('/buy', auth, async (request, response) => {
+  const { title, description } = request.body
+  const user = request.user
 
+  const announcement = new BuyCar({
+    title,
+    description,
+    user: user.id
+  })
+
+  const savedBuyCar = await announcement.save()
+  user.buyAnnouncements = user.buyAnnouncements.concat(savedBuyCar._id)
+  await user.save()
+
+  response
+    .status(201)
+    .populate('user', 'username')
+    .json({ savedBuyCar, message: 'Announcement registered successfully' })
+
+})
 
 itemRouter.get('/:id', async (request, response) => {
   /*@swagger
@@ -186,7 +205,20 @@ itemRouter.get('/:id', async (request, response) => {
               }
             }
           }
-        }           
+        }
+      }
+    }
+    #swagger.responses[404] = {
+      description: 'Error message if requested sell car announcement not found',
+      content: {
+        'application/json': {
+          schema: { 
+            type: 'object',
+            properties: {
+              message: {type: 'string', example:'Announcement not found', description:'Message if announcement not found'}
+            }
+          }
+        }
       }
     }
   */
@@ -198,6 +230,50 @@ itemRouter.get('/:id', async (request, response) => {
     return response.status(404).json({ message: 'Announcement not found' })
   }
   response.json(car)
+
+})
+
+itemRouter.get('/buy/:id', async (request, response) => {
+  /*@swagger
+    #swagger.tags = ['Item']
+    #swagger.summary = 'Get individual buy a car announcement'
+    #swagger.responses[200] = {
+      description: 'Response requested buy a car announcement',
+        content: {
+          'application/json': {
+            schema: { 
+              type: 'object',
+              properties: {
+                title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
+                description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
+                createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
+              }
+            }
+          }
+        }
+    }
+    #swagger.responses[404] = {
+      description: 'Error message if requested buy car announcement not found',
+      content: {
+        'application/json': {
+          schema: { 
+            type: 'object',
+            properties: {
+              message: {type: 'string', example:'Announcement not found', description:'Message if announcement not found'}
+            }
+          }
+        }
+      }
+    }
+  */
+
+  const itemId = request.params.id
+  const buyCar = await BuyCar.findById(itemId)
+
+  if (!buyCar) {
+    return response.status(404).json({ message: 'Announcement not found' })
+  }
+  response.json(buyCar)
 
 })
 

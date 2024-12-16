@@ -39,7 +39,24 @@
         "tags": [
           "Items"
         ],
-        "summary": "Response all announcements",
+        "summary": "Response all sell announcements",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/items/buy": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Response all buy announcements",
         "description": "",
         "responses": {
           "200": {
@@ -213,6 +230,36 @@
         }
       }
     },
+    "/api/item/buy": {
+      "post": {
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/item/{id}": {
       "get": {
         "tags": [
@@ -312,7 +359,21 @@
             }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Response requested car",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Announcement not found",
+                      "description": "Message if announcement not found"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -344,6 +405,71 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/item/buy/{id}": {
+      "get": {
+        "tags": [
+          "Item"
+        ],
+        "summary": "Get individual buy a car announcement",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response requested buy a car announcement",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string",
+                      "example": "Hyvä auto",
+                      "description": "Announcement title"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Hyvä ja vähän ajettu auto.",
+                      "description": "Announcement description"
+                    },
+                    "createdDate": {
+                      "type": "date",
+                      "example": "2024-12-09T12:00:00.000Z",
+                      "description": "Date when item is `published`"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response requested car",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Announcement not found",
+                      "description": "Message if announcement not found"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -542,6 +668,9 @@
           "401": {
             "description": "Unauthorized"
           },
+          "403": {
+            "description": "Forbidden"
+          },
           "404": {
             "description": "Not Found"
           }
@@ -566,6 +695,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
         "requestBody": {
@@ -575,9 +707,6 @@
                 "type": "object",
                 "properties": {
                   "message": {
-                    "example": "any"
-                  },
-                  "userId": {
                     "example": "any"
                   },
                   "recipientUserId": {

@@ -42,6 +42,25 @@ const carSchema = mongoose.Schema({
   }
 })
 
+const buyCarSchema = mongoose.Schema({
+  title: {
+    type: String,
+    require: true,
+  },
+  description: {
+    type: String,
+    require: true,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  createDate: {
+    type: Date,
+    default: Date.now
+  },
+})
+
 carSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
@@ -54,6 +73,16 @@ carSchema.set('toJSON', {
   }
 })
 
-const Car = mongoose.model('Car', carSchema)
+buyCarSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject._v
+    delete returnedObject.__v 
+  }
+})
 
-module.exports = Car
+const Car = mongoose.model('Car', carSchema)
+const BuyCar = mongoose.model('BuyCar', buyCarSchema)
+
+module.exports = { Car, BuyCar }
