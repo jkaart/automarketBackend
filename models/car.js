@@ -1,7 +1,7 @@
 const config = require('../utils/config')
 const mongoose = require('mongoose')
 
-const carSchema = mongoose.Schema({
+const sellCarSchema = mongoose.Schema({
   mark: {
     type: String,
     require: true
@@ -61,7 +61,7 @@ const buyCarSchema = mongoose.Schema({
   },
 })
 
-carSchema.set('toJSON', {
+sellCarSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     returnedObject.photoURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/${fileName}`)
@@ -82,7 +82,7 @@ buyCarSchema.set('toJSON', {
   }
 })
 
-const Car = mongoose.model('Car', carSchema)
+const SellCar = mongoose.model('SellCar', sellCarSchema)
 const BuyCar = mongoose.model('BuyCar', buyCarSchema)
 
-module.exports = { Car, BuyCar }
+module.exports = { SellCar, BuyCar }

@@ -17,12 +17,20 @@
   ],
   "tags": [
     {
-      "name": "Item",
-      "description": "Individual announcement endpoints"
+      "name": "Sell item",
+      "description": "Individual sell announcement endpoints"
     },
     {
-      "name": "Items",
-      "description": "All announcements endpoints"
+      "name": "Sell items",
+      "description": "All sell announcements endpoints"
+    },
+    {
+      "name": "Buy item",
+      "description": "Individual sell announcement endpoints"
+    },
+    {
+      "name": "Buy items",
+      "description": "All buy announcements endpoints"
     },
     {
       "name": "Users",
@@ -37,7 +45,7 @@
     "/api/items/": {
       "get": {
         "tags": [
-          "Items"
+          "Sell items"
         ],
         "summary": "Response all sell announcements",
         "description": "",
@@ -54,7 +62,7 @@
     "/api/items/buy": {
       "get": {
         "tags": [
-          "Items"
+          "Buy items"
         ],
         "summary": "Response all buy announcements",
         "description": "",
@@ -71,7 +79,7 @@
     "/api/item/": {
       "post": {
         "tags": [
-          "Item"
+          "Sell item"
         ],
         "summary": "Save a new car announcement",
         "description": "",
@@ -232,6 +240,10 @@
     },
     "/api/item/buy": {
       "post": {
+        "tags": [
+          "Buy item"
+        ],
+        "summary": "Save a new buy car announcement",
         "description": "",
         "responses": {
           "201": {
@@ -241,18 +253,25 @@
             "description": "Unauthorized"
           }
         },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "example": "any"
-                  },
-                  "description": {
-                    "example": "any"
-                  }
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Hyvä auto",
+                  "description": "Announcement title"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Hyvä ja vähän ajettu auto.",
+                  "description": "Announcement description"
                 }
               }
             }
@@ -263,7 +282,7 @@
     "/api/item/{id}": {
       "get": {
         "tags": [
-          "Item"
+          "Sell item"
         ],
         "summary": "Get individual car announcement",
         "description": "",
@@ -359,7 +378,7 @@
             }
           },
           "404": {
-            "description": "Response requested car",
+            "description": "Error message if requested sell car announcement not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -379,7 +398,7 @@
       },
       "delete": {
         "tags": [
-          "Item"
+          "Sell item"
         ],
         "summary": "Delete individual car announcement",
         "description": "",
@@ -412,7 +431,7 @@
     "/api/item/buy/{id}": {
       "get": {
         "tags": [
-          "Item"
+          "Buy item"
         ],
         "summary": "Get individual buy a car announcement",
         "description": "",
@@ -455,7 +474,7 @@
             }
           },
           "404": {
-            "description": "Response requested car",
+            "description": "Error message if requested buy car announcement not found",
             "content": {
               "application/json": {
                 "schema": {

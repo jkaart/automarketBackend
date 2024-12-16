@@ -3,7 +3,7 @@ const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
-const { Car, BuyCar } = require('../models/car')
+const { SellCar, BuyCar } = require('../models/car')
 const { auth, checkUserRole } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
@@ -26,7 +26,7 @@ const upload =
 
 itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Item']
+    #swagger.tags = ['Sell item']
     #swagger.summary = "Save a new car announcement"
     #swagger.security = [{ "bearerAuth": [] }]
     #swagger.requestBody = {
@@ -127,7 +127,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
 
 
   Promise.all(uploadResponses).then(async () => {
-    const car = new Car({
+    const car = new SellCar({
       mark,
       model,
       fuelType,
@@ -150,6 +150,39 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
 })
 
 itemRouter.post('/buy', auth, async (request, response) => {
+  /*@swagger
+    #swagger.tags = ['Buy item']
+    #swagger.summary = "Save a new buy car announcement"
+    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.requestBody = 
+      description: "Response requested car",
+      content: {
+        'application/json': {
+          schema: { 
+            type: 'object',
+            properties: {
+              title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
+              description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
+            }
+          }
+        }
+      }
+    #swagger.response[201] =
+      description: "Response back saved buy car announcement, id and message",
+        content: {
+          'application/json': {
+            schema: { 
+              type: 'object',
+              properties: {
+                title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
+                description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
+                createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
+              }
+            }
+          }
+        }
+
+  */
   const { title, description } = request.body
   const user = request.user
 
@@ -172,7 +205,7 @@ itemRouter.post('/buy', auth, async (request, response) => {
 
 itemRouter.get('/:id', async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Item']
+    #swagger.tags = ['Sell item']
     #swagger.summary = 'Get individual car announcement'
     #swagger.responses[200] = {
       description: "Response requested car",
@@ -224,7 +257,7 @@ itemRouter.get('/:id', async (request, response) => {
   */
 
   const itemId = request.params.id
-  const car = await Car.findById(itemId)
+  const car = await SellCar.findById(itemId)
 
   if (!car) {
     return response.status(404).json({ message: 'Announcement not found' })
@@ -235,7 +268,7 @@ itemRouter.get('/:id', async (request, response) => {
 
 itemRouter.get('/buy/:id', async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Item']
+    #swagger.tags = ['Buy item']
     #swagger.summary = 'Get individual buy a car announcement'
     #swagger.responses[200] = {
       description: 'Response requested buy a car announcement',
@@ -279,12 +312,12 @@ itemRouter.get('/buy/:id', async (request, response) => {
 
 itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Item']
+    #swagger.tags = ['Sell item']
     #swagger.summary = 'Delete individual car announcement'
   */
 
   const itemId = request.params.id
-  const deletedCar = await Car.findByIdAndDelete(itemId)
+  const deletedCar = await SellCar.findByIdAndDelete(itemId)
   if (!deletedCar) {
     return response.status(404).end()
   }

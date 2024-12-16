@@ -17,12 +17,20 @@ const doc = {
   ],
   tags: [
     {
-      name: 'Item',
-      description: 'Individual announcement endpoints'
+      name: 'Sell item',
+      description: 'Individual sell announcement endpoints'
     },
     {
-      name: 'Items',
-      description: 'All announcements endpoints'
+      name: 'Sell items',
+      description: 'All sell announcements endpoints'
+    },
+    {
+      name: 'Buy item',
+      description: 'Individual sell announcement endpoints'
+    },
+    {
+      name: 'Buy items',
+      description: 'All buy announcements endpoints'
     },
     {
       name: 'Users',

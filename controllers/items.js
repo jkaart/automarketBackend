@@ -3,7 +3,7 @@ const {Car, BuyCar} = require('../models/car')
 
 itemsRouter.get('/', async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Items']
+    #swagger.tags = ['Sell items']
     #swagger.summary = 'Response all sell announcements'
   */
   const cars = await Car.find({})
@@ -16,7 +16,7 @@ itemsRouter.get('/', async (request, response) => {
 
 itemsRouter.get('/buy', async (request, response) => {
   /*@swagger
-    #swagger.tags = ['Items']
+    #swagger.tags = ['Buy items']
     #swagger.summary = 'Response all buy announcements'
   */
   const cars = await BuyCar.find({})
