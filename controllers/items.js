@@ -1,12 +1,12 @@
 const itemsRouter = require('express').Router()
-const {Car, BuyCar} = require('../models/car')
+const {SellCar, BuyCar} = require('../models/car')
 
 itemsRouter.get('/', async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell items']
     #swagger.summary = 'Response all sell announcements'
   */
-  const cars = await Car.find({})
+  const cars = await SellCar.find({})
   if (!cars) {
     return response.status(204).end()
   }
