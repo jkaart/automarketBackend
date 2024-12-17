@@ -18,7 +18,9 @@ messageRouter.post('/', auth, async (request, response) => {
   if (!recipientUserId) {
     return response.status(400).json({ error: 'recipientUserId missing' })
   }
-
+  if (!announcementId) {
+    return response.status(400).json({ error: 'announcementId missing' })
+  }
   const recipientUser = await User.findById(recipientUserId)
 
   if (!recipientUser) {
