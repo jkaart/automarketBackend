@@ -742,9 +742,7 @@
             }
           }
         }
-      }
-    },
-    "/api/message/sended": {
+      },
       "get": {
         "description": "",
         "responses": {
