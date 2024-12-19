@@ -9,7 +9,8 @@ userRouter.get('/', auth, async (request, response) => {
     #swagger.security = [{"bearerAuth": []}]
     */
   const id = request.user.id
-  const user = await User.findById({ '_id': id }).populate(['sendedMessages', 'receivedMessages'])
+  const user = await User.findById({ '_id': id })
+
   if (!user) {
     return response.status(404).end()
   }

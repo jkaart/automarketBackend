@@ -28,11 +28,11 @@ const userSchema = mongoose.Schema({
   }],
   sendedMessages: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Message'
+    ref: 'Messages'
   }],
   receivedMessages: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Message'
+    ref: 'Messages'
   }],
   registrationDate: { type: Date, default: Date.now },
 
@@ -40,8 +40,8 @@ const userSchema = mongoose.Schema({
 
 userSchema.pre('findByIdAndDelete', async (doc) => {
   mongoose.model('Item').deleteMany({ user: doc._id })
-  mongoose.model('Message').deleteMany({ senderUser: doc._id })
-  mongoose.model('Message').deleteMany({ recipientUser: doc._id })
+  mongoose.model('Messages').deleteMany({ senderUser: doc._id })
+  mongoose.model('Messages').deleteMany({ recipientUser: doc._id })
 })
 
 userSchema.set('toJSON', {

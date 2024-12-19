@@ -733,10 +733,45 @@
                   },
                   "announcementId": {
                     "example": "any"
+                  },
+                  "announcementType": {
+                    "example": "any"
                   }
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/message/sended": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/message/received": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
