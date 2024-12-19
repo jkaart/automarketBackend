@@ -76,16 +76,16 @@ messageRouter.get('/', auth, async (request, response) => {
       }
     }, {
       '$lookup': {
-        'from': 'users',
-        'localField': 'recipientUser',
-        'foreignField': '_id',
+        'from': 'users', 
+        'localField': 'recipientUser', 
+        'foreignField': '_id', 
         'as': 'recipientUser'
       }
     }, {
       '$lookup': {
-        'from': 'sellcars',
-        'localField': 'announcementId',
-        'foreignField': '_id',
+        'from': 'sellcars', 
+        'localField': 'announcementId', 
+        'foreignField': '_id', 
         'as': 'announcement'
       }
     }, {
@@ -93,6 +93,11 @@ messageRouter.get('/', auth, async (request, response) => {
         'recipientUser': {
           '$arrayElemAt': [
             '$recipientUser.username', 0
+          ]
+        }, 
+        'recipientUserId': {
+          '$arrayElemAt': [
+            '$recipientUser._id', 0
           ]
         }
       }
@@ -108,7 +113,7 @@ messageRouter.get('/', auth, async (request, response) => {
       '$addFields': {
         'date': {
           '$dateToString': {
-            'format': '%Y-%m-%d',
+            'format': '%Y-%m-%d', 
             'date': '$sendDate'
           }
         }
@@ -116,21 +121,22 @@ messageRouter.get('/', auth, async (request, response) => {
     }, {
       '$group': {
         '_id': {
-          'messageType': '$messageType',
-          'recipientUser': '$recipientUser',
-          'announcement': '$announcementId',
+          'messageType': '$messageType', 
+          'recipientUser': '$recipientUser', 
+          'recipientUserId': '$recipientUserId', 
+          'announcement': '$announcement', 
           'date': '$date'
-        },
+        }, 
         'messages': {
           '$push': '$message'
-        },
+        }, 
         'count': {
           '$sum': 1
         }
       }
     }, {
       '$sort': {
-        '_id.messageType': 1,
+        '_id.messageType': 1, 
         '_id.date': 1
       }
     }
