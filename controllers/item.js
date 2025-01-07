@@ -24,6 +24,8 @@ const upload =
     fileFilter: checkFileTypes
   })
 
+//Todo: need purchase car implementing
+
 itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell item']

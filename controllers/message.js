@@ -56,36 +56,31 @@ messageRouter.get('/', auth, async (request, response) => {
       '$match': {
         '$or': [
           {
-            'senderUser': request.user._id
+            'senderUser': request.user._id,
           }, {
-            'recipientUser': request.user._id
+            'recipientUser': request.user._id,
           }
         ]
       }
     }, {
-      '$addFields': {
-        'messageType': {
-          '$cond': [
-            {
-              '$eq': [
-                '$senderId', request.user._id
-              ]
-            }, 'sent', 'received'
-          ]
-        }
+      '$lookup': {
+        'from': 'users',
+        'localField': 'senderUser',
+        'foreignField': '_id',
+        'as': 'senderUser'
       }
     }, {
       '$lookup': {
-        'from': 'users', 
-        'localField': 'recipientUser', 
-        'foreignField': '_id', 
+        'from': 'users',
+        'localField': 'recipientUser',
+        'foreignField': '_id',
         'as': 'recipientUser'
       }
     }, {
       '$lookup': {
-        'from': 'sellcars', 
-        'localField': 'announcementId', 
-        'foreignField': '_id', 
+        'from': 'sellcars',
+        'localField': 'announcementId',
+        'foreignField': '_id',
         'as': 'announcement'
       }
     }, {
@@ -94,10 +89,23 @@ messageRouter.get('/', auth, async (request, response) => {
           '$arrayElemAt': [
             '$recipientUser.username', 0
           ]
-        }, 
+        },
         'recipientUserId': {
           '$arrayElemAt': [
             '$recipientUser._id', 0
+          ]
+        }
+      }
+    }, {
+      '$addFields': {
+        'senderUser': {
+          '$arrayElemAt': [
+            '$senderUser.username', 0
+          ]
+        },
+        'recipientUserId': {
+          '$arrayElemAt': [
+            '$senderUser._id', 0
           ]
         }
       }
@@ -110,37 +118,23 @@ messageRouter.get('/', auth, async (request, response) => {
         }
       }
     }, {
-      '$addFields': {
-        'date': {
-          '$dateToString': {
-            'format': '%Y-%m-%d', 
-            'date': '$sendDate'
+      '$group': {
+        '_id': {
+          'announcement': '$announcement'
+        },
+        'messages': {
+          '$push': {
+            'message': '$message',
+            'sendDate': '$sendDate',
+            'recipientUser': '$recipientUser',
+            'recipientUserId': '$recipientUserId',
+            'senderUser': '$senderUser'
           }
         }
       }
-    }, {
-      '$group': {
-        '_id': {
-          'messageType': '$messageType', 
-          'recipientUser': '$recipientUser', 
-          'recipientUserId': '$recipientUserId', 
-          'announcement': '$announcement', 
-          'date': '$date'
-        }, 
-        'messages': {
-          '$push': '$message'
-        }, 
-        'count': {
-          '$sum': 1
-        }
-      }
-    }, {
-      '$sort': {
-        '_id.messageType': 1, 
-        '_id.date': 1
-      }
     }
   ])
+
   console.log(messages)
 
   if (messages.length === 0) {
