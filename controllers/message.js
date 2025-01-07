@@ -51,36 +51,16 @@ messageRouter.post('/', auth, async (request, response) => {
 
 messageRouter.get('/', auth, async (request, response) => {
   console.log(request.user.id)
-  const messages = await Messages.aggregate([ //Todo: Need fixing
+  const messages = await Messages.aggregate([
     {
       '$match': {
         '$or': [
           {
-            'senderUser': request.user._id
+            'senderUser': request.user._id,
           }, {
-            'recipientUser': request.user._id
+            'recipientUser': request.user._id,
           }
         ]
-      }
-    },
-    {
-      '$addFields': {
-        'messageType': {
-          '$cond': [
-            {
-              '$eq': [
-                '$senderId', request.user._id
-              ]
-            }, 'sent', 'received'
-          ]
-        }
-      }
-    }, {
-      '$lookup': {
-        'from': 'users',
-        'localField': 'recipientUser',
-        'foreignField': '_id',
-        'as': 'recipientUser'
       }
     }, {
       '$lookup': {
@@ -88,6 +68,13 @@ messageRouter.get('/', auth, async (request, response) => {
         'localField': 'senderUser',
         'foreignField': '_id',
         'as': 'senderUser'
+      }
+    }, {
+      '$lookup': {
+        'from': 'users',
+        'localField': 'recipientUser',
+        'foreignField': '_id',
+        'as': 'recipientUser'
       }
     }, {
       '$lookup': {
@@ -131,38 +118,23 @@ messageRouter.get('/', auth, async (request, response) => {
         }
       }
     }, {
-      '$addFields': {
-        'date': {
-          '$dateToString': {
-            'format': '%Y-%m-%d',
-            'date': '$sendDate'
+      '$group': {
+        '_id': {
+          'announcement': '$announcement'
+        },
+        'messages': {
+          '$push': {
+            'message': '$message',
+            'sendDate': '$sendDate',
+            'recipientUser': '$recipientUser',
+            'recipientUserId': '$recipientUserId',
+            'senderUser': '$senderUser'
           }
         }
       }
-    }, {
-      '$group': {
-        '_id': {
-          'messageType': '$messageType',
-          'senderUser': '$senderUser',
-          'recipientUser': '$recipientUser',
-          'recipientUserId': '$recipientUserId',
-          'announcement': '$announcement',
-          'date': '$date'
-        },
-        'messages': {
-          '$push': '$message'
-        },
-        'count': {
-          '$sum': 1
-        }
-      }
-    }, {
-      '$sort': {
-        '_id.messageType': 1,
-        '_id.date': 1
-      }
     }
   ])
+
   console.log(messages)
 
   if (messages.length === 0) {
