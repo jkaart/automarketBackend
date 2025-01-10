@@ -47,6 +47,23 @@
         "tags": [
           "Sell items"
         ],
+        "summary": "Response all announcements",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/items/sell": {
+      "get": {
+        "tags": [
+          "Sell items"
+        ],
         "summary": "Response all sell announcements",
         "description": "",
         "responses": {
@@ -238,47 +255,6 @@
         }
       }
     },
-    "/api/item/buy": {
-      "post": {
-        "tags": [
-          "Buy item"
-        ],
-        "summary": "Save a new buy car announcement",
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "example": "Hyvä auto",
-                  "description": "Announcement title"
-                },
-                "description": {
-                  "type": "string",
-                  "example": "Hyvä ja vähän ajettu auto.",
-                  "description": "Announcement description"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/item/{id}": {
       "get": {
         "tags": [
@@ -424,71 +400,6 @@
           },
           "404": {
             "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/api/item/buy/{id}": {
-      "get": {
-        "tags": [
-          "Buy item"
-        ],
-        "summary": "Get individual buy a car announcement",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Response requested buy a car announcement",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "title": {
-                      "type": "string",
-                      "example": "Hyvä auto",
-                      "description": "Announcement title"
-                    },
-                    "description": {
-                      "type": "string",
-                      "example": "Hyvä ja vähän ajettu auto.",
-                      "description": "Announcement description"
-                    },
-                    "createdDate": {
-                      "type": "date",
-                      "example": "2024-12-09T12:00:00.000Z",
-                      "description": "Date when item is `published`"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Error message if requested buy car announcement not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Announcement not found",
-                      "description": "Message if announcement not found"
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -725,16 +636,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": {
+                  "recipientUserId": {
                     "example": "any"
                   },
-                  "recipientUserId": {
+                  "message": {
                     "example": "any"
                   },
                   "announcementId": {
                     "example": "any"
                   },
-                  "announcementType": {
+                  "topicId": {
                     "example": "any"
                   }
                 }
@@ -742,7 +653,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/message/topics": {
       "get": {
         "description": "",
         "responses": {
@@ -758,9 +671,19 @@
         }
       }
     },
-    "/api/message/received": {
+    "/api/message/topics/{id}": {
       "get": {
         "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

@@ -10,11 +10,11 @@ usersRouter.get('/', auth, checkUserRole(['admin']), async (request, response) =
       "bearerAuth": []
     }]
     */
-  const users = await User.find({}).populate(['sendedMessages', 'receivedMessages'])
+  const users = await User.find({})
   if (users.length > 0) {
     return response.json(users)
   }
-  response.status(404)
+  response.status(404).end()
 
 })
 

@@ -1,7 +1,15 @@
 const mongoose = require('mongoose')
 
-const messagesSchema = mongoose.Schema({
-  message: String,
+const topicSchema = mongoose.Schema({
+  messages: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Message',
+  }],
+  announcement: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Car',
+    required: true,
+  },
   recipientUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -12,27 +20,47 @@ const messagesSchema = mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  announcementId: {
+  sendDate: { type: Date, default: Date.now },
+})
+
+const messageSchema = mongoose.Schema({
+  message: String,
+  topic: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'Topic',
     required: true,
   },
-  announcementType: {
-    type: String,
-    enum: ['buy', 'sell'],
+  senderUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   sendDate: { type: Date, default: Date.now },
 })
 
-messagesSchema.set('toJSON', {
+topicSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
+    if (returnedObject._id) {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+    }
     delete returnedObject._v
     delete returnedObject.__v
   }
 })
 
-const Messages = mongoose.model('Messages', messagesSchema)
+messageSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    if (returnedObject._id) {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+    }
+    delete returnedObject._v
+    delete returnedObject.__v
+  }
+})
 
-module.exports = { Messages }
+const Topic = mongoose.model('Topic', topicSchema)
+const Message = mongoose.model('Message', messageSchema)
+
+module.exports = { Topic, Message }
