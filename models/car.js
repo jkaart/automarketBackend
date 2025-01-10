@@ -1,30 +1,34 @@
 const config = require('../utils/config')
 const mongoose = require('mongoose')
 
-const sellCarSchema = mongoose.Schema({
+const carSchema = mongoose.Schema({
+  announcementType: {
+    type: String,
+    enum: ['sell', 'buy']
+  },
   mark: {
     type: String,
-    require: true
+    required: true
   },
   model: {
     type: String,
-    require: true
+    required: true
   },
   fuelType: {
     type: String,
-    require: true
+    required: true
   },
   mileage: {
     type: Number,
-    require: true
+    required: true
   },
   gearBoxType: {
     type: String,
-    require: true
+    required: true
   },
   price: {
     type: Number,
-    require: true
+    required: true
   },
   onSale: {
     type: Boolean,
@@ -42,47 +46,23 @@ const sellCarSchema = mongoose.Schema({
   }
 })
 
-const buyCarSchema = mongoose.Schema({
-  title: {
-    type: String,
-    require: true,
-  },
-  description: {
-    type: String,
-    require: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  createDate: {
-    type: Date,
-    default: Date.now
-  },
-})
 
-sellCarSchema.set('toJSON', {
+carSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    returnedObject.photoURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/${fileName}`)
-    returnedObject.thumbnailURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/thumb_${fileName}`)
-    delete returnedObject._id
+    if (returnedObject._id) {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+    }
+    if (returnedObject.photoFileNames) {
+      returnedObject.photoURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/${fileName}`)
+      returnedObject.thumbnailURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/thumb_${fileName}`)
+      delete returnedObject.photoFileNames
+    }
     delete returnedObject._v
     delete returnedObject.__v
-    delete returnedObject.photoFileNames
   }
 })
 
-buyCarSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject._v
-    delete returnedObject.__v 
-  }
-})
+const Car = mongoose.model('Car', carSchema)
 
-const SellCar = mongoose.model('SellCar', sellCarSchema)
-const BuyCar = mongoose.model('BuyCar', buyCarSchema)
-
-module.exports = { SellCar, BuyCar }
+module.exports = Car

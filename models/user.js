@@ -28,14 +28,13 @@ const userSchema = mongoose.Schema({
   }],
   sendedMessages: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Messages'
+    ref: 'Topic'
   }],
   receivedMessages: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Messages'
+    ref: 'Topic'
   }],
   registrationDate: { type: Date, default: Date.now },
-
 })
 
 userSchema.pre('findByIdAndDelete', async (doc) => {
@@ -46,8 +45,10 @@ userSchema.pre('findByIdAndDelete', async (doc) => {
 
 userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
+    if (returnedObject._id) {
+      returnedObject.id = returnedObject._id.toString()
+      delete returnedObject._id
+    }
     delete returnedObject._v
     delete returnedObject.__v
     delete returnedObject.passwordHash
