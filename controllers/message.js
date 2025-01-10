@@ -69,52 +69,8 @@ messageRouter.post('/', auth, async (request, response) => {
   response.status(200).json({ message: 'Message saved and sended' })
 })
 
-// messageRouter.post('/reply', auth, async (request, response) => {
-//   /*@swagger
-//     #swagger.tags = ['User']
-//     #swagger.summary = 'Messages between users'
-//   */
-
-//   const senderUser = request.user
-//   const { message, topicId } = request.body
-
-//   if (!message || message.length === 0) {
-//     return response.status(400).json({ error: 'message missing' })
-//   }
-//   if (!topicId) {
-//     return response.status(400).json({ error: 'topicId missing' })
-//   }
-
-//   const topic = await Topic.findById(topicId)
-//   const recipientUser = await User.findById(topic.recipientUser)
-//   if (!recipientUser) {
-//     return response.status(400).json({ error: 'Recipient user not found' })
-//   }
-
-
-
-//   if (!topic) {
-//     return response.status(400).json({ error: 'Topic not found' })
-//   }
-
-//   const msg = new Message({
-//     message,
-//     topic: topic.id,
-//     senderUser: senderUser.id,
-//     recipientUser: topic.recipientUserId
-//   })
-
-//   const savedMessage = await msg.save()
-//   topic.messages = await topic.messages.concat(savedMessage._id)
-//   await topic.save()
-//   console.log('hep')
-
-//   response.status(200).json({ savedMessage, message: 'Message saved and sended' })
-// })
-
 messageRouter.get('/topics/:index', auth, async (request, response) => {
   const index = request.params.index
-  console.log(index)
   const topics = await Topic.find({ $or: [{ recipientUser: request.user.id }, { senderUser: request.user.id }] })
     .sort({'sendDate': 1})
     .skip(index * 10)
