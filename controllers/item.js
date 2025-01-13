@@ -3,7 +3,7 @@ const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
-const Car = require('../models/car')
+const { SellCar, BuyCar } = require('../models/car')
 const { auth, checkUserRole } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
@@ -95,60 +95,88 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     }
   */
   const user = request.user
-  const { mark, model, fuelType, mileage, gearBoxType, price, description } = request.body
+  const { mark, model, gearBoxType, price, description, announcementType } = request.body
   /* if (!request.files) {
           return response.status(422).json('Photos missing')
       }
    */
-  const storedFileNames = []
+  if (announcementType === 'sell') {
+    const { fuelType, mileage } = request.body
+    const storedFileNames = []
 
-  const uploadResponses = request.files.map(async file => {
-    //const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
-    const newFileName = uuidv4() + '.jpg'
-    storedFileNames.push(newFileName)
+    const uploadResponses = request.files.map(async file => {
+      //const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
+      const newFileName = uuidv4() + '.jpg'
+      storedFileNames.push(newFileName)
 
-    /* const output = await sharp(file.buffer)
-      .resize({ width: 1024 })
-      .toBuffer()
-
-    const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, output, {
-      headers: {
-        'Content-Type': 'image/jpeg',
-      },
-    }) */
-
-    const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
-      {
+      /* const output = await sharp(file.buffer)
+        .resize({ width: 1024 })
+        .toBuffer()
+  
+      const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, output, {
         headers: {
-          'Content-Type': file.mimetype,
-          'Content-Length': file.size,
+          'Content-Type': 'image/jpeg',
+        },
+      }) */
+
+      const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
+        {
+          headers: {
+            'Content-Type': file.mimetype,
+            'Content-Length': file.size,
+          }
         }
-      }
-    )
-  })
+      )
+    })
 
+    Promise.all(uploadResponses).then(async () => {
+      const car = new SellCar({
+        announcementType,
+        mark,
+        model,
+        fuelType,
+        mileage,
+        gearBoxType,
+        price,
+        description,
+        photoFileNames: storedFileNames,
+        user: user.id
+      })
 
-  Promise.all(uploadResponses).then(async () => {
-    const car = new Car({
+      const savedCar = await car.save()
+      user.sellAnnouncements = user.sellAnnouncements.concat(savedCar._id)
+      await user.save()
+
+      response
+        .status(201)
+        .json({ savedCar, message: 'Announcement registered successfully' })
+    })
+  }
+  else if (announcementType === 'buy') {
+    const year = request.body.year
+
+    const car = new BuyCar({
+      announcementType,
       mark,
       model,
-      fuelType,
-      mileage,
+      year,
       gearBoxType,
       price,
       description,
-      photoFileNames: storedFileNames,
       user: user.id
     })
 
     const savedCar = await car.save()
-    user.sellAnnouncements = user.sellAnnouncements.concat(savedCar._id)
+    user.buyAnnouncements = user.buyAnnouncements.concat(savedCar._id)
     await user.save()
 
     response
       .status(201)
       .json({ savedCar, message: 'Announcement registered successfully' })
-  })
+  }
+  else {
+    response.status(422).json({ error: 'announcementType missing or it is wrong' })
+  }
 })
 
 // itemRouter.post('/buy', auth, async (request, response) => {
@@ -259,10 +287,13 @@ itemRouter.get('/:id', async (request, response) => {
   */
 
   const itemId = request.params.id
-  const car = await Car.findById(itemId)
+  let car = await SellCar.findById(itemId)
 
   if (!car) {
-    return response.status(404).json({ message: 'Announcement not found' })
+    car = await BuyCar.findById(itemId)
+    if (!car) {
+      return response.status(404).json({ message: 'Announcement not found' })
+    }
   }
   response.json(car)
 
@@ -319,22 +350,29 @@ itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, respon
   */
 
   const itemId = request.params.id
-  const deletedCar = await Car.findByIdAndDelete(itemId)
+  let deletedCar = await SellCar.findByIdAndDelete(itemId)
+
   if (!deletedCar) {
-    return response.status(404).end()
+    deletedCar = await BuyCar.findByIdAndDelete(itemId)
+    if (!deletedCar) {
+      return response.status(404).end()
+    }
   }
 
-  const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
-    const objectName = `${config.OCI_FOLDER}/${fileName}`
-    const httpRequest = await getOCIAuthHeaders(objectName)
+  if (deletedCar.announcement.photoFileNames.length > 0) {
+    const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
+      const objectName = `${config.OCI_FOLDER}/${fileName}`
+      const httpRequest = await getOCIAuthHeaders(objectName)
 
-    const result = await axios.delete(httpRequest.uri, { headers: Object.fromEntries(httpRequest.headers) })
-  })
+      const result = await axios.delete(httpRequest.uri, { headers: Object.fromEntries(httpRequest.headers) })
+      return result
+    })
 
-  Promise.all(deleteResponses).then(() => {
-    response.status(204).end()
-  })
-
+    Promise.all(deleteResponses).then(() => {
+      return response.status(204).end()
+    })
+  }
+  response.status(204).end()
 })
 
 module.exports = itemRouter

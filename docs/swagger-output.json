@@ -183,6 +183,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
           }
         },
         "security": [
@@ -655,9 +658,19 @@
         }
       }
     },
-    "/api/message/topics": {
+    "/api/message/topics/{index}": {
       "get": {
         "description": "",
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -671,12 +684,20 @@
         }
       }
     },
-    "/api/message/topics/{id}": {
+    "/api/message/topics/{id}/{index}": {
       "get": {
         "description": "",
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "index",
             "in": "path",
             "required": true,
             "schema": {
