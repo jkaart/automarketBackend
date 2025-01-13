@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema({
   },
   sellAnnouncements: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Car'
+    ref: 'SellCar'
   }],
   buyAnnouncements: [{
     type: mongoose.Schema.Types.ObjectId,
