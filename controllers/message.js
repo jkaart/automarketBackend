@@ -71,22 +71,24 @@ messageRouter.post('/', auth, async (request, response) => {
 
 messageRouter.get('/topics/:index', auth, async (request, response) => {
   const index = request.params.index
-  const topics = await Topic.find({ $or: [{ recipientUser: request.user.id }, { senderUser: request.user.id }] })
-    .sort({'sendDate': 1})
+  const totalCount = await Topic.find({ $or: [{ recipientUser: request.user.id }, { senderUser: request.user.id }] }).countDocuments()
+  if (totalCount === 0) {
+    return response.status(204).end()
+  }
+  let topics = await Topic.find({ $or: [{ recipientUser: request.user.id }, { senderUser: request.user.id }] })
+    .sort({ 'sendDate': -1 })
     .skip(index * 10)
     .limit(10)
     .populate({ path: 'recipientUser', select: '-_id username' })
     .populate({ path: 'senderUser', select: '-_id username' })
     .populate({ path: 'announcement', select: '-_id announcementType mark model mileage price' })
 
-  if (topics.length === 0) {
-    return response.status(204).end()
-  }
-  response.json(topics)
+  const result = {topics, totalCount}
+  response.json(result)
 })
 
 messageRouter.get('/topics/:id/:index', auth, async (request, response) => {
-  const {id, index} = request.params
+  const { id, index } = request.params
   const user = request.user
   if (!user.sendedMessages.includes(id) && !user.receivedMessages.includes(id)) {
     return response.status(204).json({ error: 'Unauthorized' })
