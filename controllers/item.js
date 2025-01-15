@@ -3,7 +3,8 @@ const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
-const { SellCar, BuyCar } = require('../models/car')
+const { SellCar, BuyCar, Car } = require('../models/car')
+const User = require('../models/user')
 const { auth, checkUserRole } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
@@ -144,7 +145,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       })
 
       const savedCar = await car.save()
-      user.sellAnnouncements = user.sellAnnouncements.concat(savedCar._id)
+      user.announcements = user.announcements.concat(savedCar._id)
       await user.save()
 
       response
@@ -167,7 +168,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     })
 
     const savedCar = await car.save()
-    user.buyAnnouncements = user.buyAnnouncements.concat(savedCar._id)
+    user.announcements = user.announcements.concat(savedCar._id)
     await user.save()
 
     response
@@ -175,7 +176,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       .json({ savedCar, message: 'Announcement registered successfully' })
   }
   else {
-    response.status(422).json({ error: 'announcementType missing or it is wrong' })
+    response.status(422).json({ message: 'announcementType missing or it is wrong' })
   }
 })
 
@@ -299,67 +300,34 @@ itemRouter.get('/:id', async (request, response) => {
 
 })
 
-// itemRouter.get('/buy/:id', async (request, response) => {
-//   /*@swagger
-//     #swagger.tags = ['Buy item']
-//     #swagger.summary = 'Get individual buy a car announcement'
-//     #swagger.responses[200] = {
-//       description: 'Response requested buy a car announcement',
-//         content: {
-//           'application/json': {
-//             schema: { 
-//               type: 'object',
-//               properties: {
-//                 title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
-//                 description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
-//                 createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
-//               }
-//             }
-//           }
-//         }
-//     }
-//     #swagger.responses[404] = {
-//       description: 'Error message if requested buy car announcement not found',
-//       content: {
-//         'application/json': {
-//           schema: { 
-//             type: 'object',
-//             properties: {
-//               message: {type: 'string', example:'Announcement not found', description:'Message if announcement not found'}
-//             }
-//           }
-//         }
-//       }
-//     }
-//   */
-
-//   const itemId = request.params.id
-//   const buyCar = await BuyCar.findById(itemId)
-
-//   if (!buyCar) {
-//     return response.status(404).json({ message: 'Announcement not found' })
-//   }
-//   response.json(buyCar)
-
-// })
-
-itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, response) => {
+itemRouter.delete('/:id', auth, async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell item']
     #swagger.summary = 'Delete individual car announcement'
   */
 
+  const user = request.user
   const itemId = request.params.id
-  let deletedCar = await SellCar.findByIdAndDelete(itemId)
-
-  if (!deletedCar) {
-    deletedCar = await BuyCar.findByIdAndDelete(itemId)
-    if (!deletedCar) {
+  if (user.role === 'user') {
+    if (!user.announcements.includes(itemId)) {
       return response.status(404).end()
     }
   }
+  const deletedCar = await Car.findByIdAndDelete(itemId)
+  if (!deletedCar) {
+    return response.status(404).end()
+  }
+  
+  const result = await User.updateMany({}, { $pull: { announcements: itemId } }, { new: true })
 
-  if (deletedCar.announcement.photoFileNames.length > 0) {
+  // if (!deletedCar) {
+  //   deletedCar = await BuyCar.findByIdAndDelete(itemId)
+  //   if (!deletedCar) {
+  //     return response.status(404).end()
+  //   }
+  //}
+
+  if (Object.keys(deletedCar.photoFileNames).length > 0) {
     const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
       const objectName = `${config.OCI_FOLDER}/${fileName}`
       const httpRequest = await getOCIAuthHeaders(objectName)
@@ -371,8 +339,10 @@ itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, respon
     Promise.all(deleteResponses).then(() => {
       return response.status(204).end()
     })
+  } 
+  else {
+    response.status(204).end()
   }
-  response.status(204).end()
 })
 
 module.exports = itemRouter

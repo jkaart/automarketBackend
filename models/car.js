@@ -135,4 +135,4 @@ const Car = mongoose.model('Car', carSchema, 'cars')
 const SellCar = Car.discriminator('SellCar', sellCarSchema, 'cars')
 const BuyCar = Car.discriminator('BuyCar', buyCarSchema, 'cars')
 
-module.exports = { SellCar, BuyCar }
+module.exports = { SellCar, BuyCar, Car }
