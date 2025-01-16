@@ -75,7 +75,7 @@ messageRouter.get('/topics/:index', auth, async (request, response) => {
   if (totalCount === 0) {
     return response.status(204).end()
   }
-  let topics = await Topic.find({ $or: [{ recipientUser: request.user.id }, { senderUser: request.user.id }] })
+  const topics = await Topic.find({ $or: [{ recipientUser: request.user.id }, { senderUser: request.user.id }] })
     .sort({ 'sendDate': -1 })
     .skip(index * 10)
     .limit(10)
@@ -91,7 +91,7 @@ messageRouter.get('/topics/:id/:index', auth, async (request, response) => {
   const { id, index } = request.params
   const user = request.user
   if (!user.sendedMessages.includes(id) && !user.receivedMessages.includes(id)) {
-    return response.status(204).json({ error: 'Unauthorized' })
+    return response.status(403).json({ message: 'Access denied. No permissions.' })
   }
   const rawMessages = await Message.find({ 'topic': id })
     .select('-_id message sendDate')

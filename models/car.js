@@ -40,7 +40,7 @@ const sellCarSchema = mongoose.Schema({
     type: Number,
     required: true
   },
-  onSale: {
+  onActive: {
     type: Boolean,
     default: true
   },
@@ -131,8 +131,12 @@ buyCarSchema.set('toJSON', {
   }
 })
 
-const Car = mongoose.model('Car', carSchema, 'cars')
-const SellCar = Car.discriminator('SellCar', sellCarSchema, 'cars')
-const BuyCar = Car.discriminator('BuyCar', buyCarSchema, 'cars')
+const options = { discriminatorKey: 'kind', collection: 'cars' }
+const BaseSchema = new mongoose.Schema({ name: String }, options)
 
-module.exports = { SellCar, BuyCar }
+const Car = mongoose.model('Car', BaseSchema)
+
+const SellCar = Car.discriminator('SellCar', sellCarSchema)
+const BuyCar = Car.discriminator('BuyCar', buyCarSchema)
+
+module.exports = { SellCar, BuyCar, Car }

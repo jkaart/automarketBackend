@@ -3,7 +3,8 @@ const multer = require('multer')
 const axios = require('axios')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
-const { SellCar, BuyCar } = require('../models/car')
+const { SellCar, BuyCar, Car } = require('../models/car')
+const User = require('../models/user')
 const { auth, checkUserRole } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
@@ -144,7 +145,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       })
 
       const savedCar = await car.save()
-      user.sellAnnouncements = user.sellAnnouncements.concat(savedCar._id)
+      user.announcements = user.announcements.concat(savedCar._id)
       await user.save()
 
       response
@@ -167,7 +168,7 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
     })
 
     const savedCar = await car.save()
-    user.buyAnnouncements = user.buyAnnouncements.concat(savedCar._id)
+    user.announcements = user.announcements.concat(savedCar._id)
     await user.save()
 
     response
@@ -175,63 +176,9 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
       .json({ savedCar, message: 'Announcement registered successfully' })
   }
   else {
-    response.status(422).json({ error: 'announcementType missing or it is wrong' })
+    response.status(422).json({ message: 'announcementType missing or it is wrong' })
   }
 })
-
-// itemRouter.post('/buy', auth, async (request, response) => {
-//   /*@swagger
-//     #swagger.tags = ['Buy item']
-//     #swagger.summary = "Save a new buy car announcement"
-//     #swagger.security = [{ "bearerAuth": [] }]
-//     #swagger.requestBody = 
-//       description: "Response requested car",
-//       content: {
-//         'application/json': {
-//           schema: { 
-//             type: 'object',
-//             properties: {
-//               title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
-//               description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
-//             }
-//           }
-//         }
-//       }
-//     #swagger.response[201] =
-//       description: "Response back saved buy car announcement, id and message",
-//         content: {
-//           'application/json': {
-//             schema: { 
-//               type: 'object',
-//               properties: {
-//                 title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
-//                 description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
-//                 createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
-//               }
-//             }
-//           }
-//         }
-
-//   */
-//   const { title, description } = request.body
-//   const user = request.user
-
-//   const announcement = new BuyCar({
-//     title,
-//     description,
-//     user: user.id
-//   })
-
-//   const savedBuyCar = await announcement.save()
-//   user.buyAnnouncements = user.buyAnnouncements.concat(savedBuyCar._id)
-//   await user.save()
-
-//   response
-//     .status(201)
-//     .populate('user', 'username')
-//     .json({ savedBuyCar, message: 'Announcement registered successfully' })
-
-// })
 
 itemRouter.get('/:id', async (request, response) => {
   /*@swagger
@@ -287,79 +234,42 @@ itemRouter.get('/:id', async (request, response) => {
   */
 
   const itemId = request.params.id
-  let car = await SellCar.findById(itemId)
-
+  const car = await Car.findById(itemId)
   if (!car) {
-    car = await BuyCar.findById(itemId)
-    if (!car) {
-      return response.status(404).json({ message: 'Announcement not found' })
-    }
+    return response.status(404).json({ message: 'Announcement not found' })
   }
   response.json(car)
 
 })
 
-// itemRouter.get('/buy/:id', async (request, response) => {
-//   /*@swagger
-//     #swagger.tags = ['Buy item']
-//     #swagger.summary = 'Get individual buy a car announcement'
-//     #swagger.responses[200] = {
-//       description: 'Response requested buy a car announcement',
-//         content: {
-//           'application/json': {
-//             schema: { 
-//               type: 'object',
-//               properties: {
-//                 title: {type: 'string', example:'Hyvä auto', description: 'Announcement title'},
-//                 description: {type:'string', example:'Hyvä ja vähän ajettu auto.', description: 'Announcement description'},
-//                 createdDate: {type: 'date', example:'2024-12-09T12:00:00.000Z', description:'Date when item is `published`'},
-//               }
-//             }
-//           }
-//         }
-//     }
-//     #swagger.responses[404] = {
-//       description: 'Error message if requested buy car announcement not found',
-//       content: {
-//         'application/json': {
-//           schema: { 
-//             type: 'object',
-//             properties: {
-//               message: {type: 'string', example:'Announcement not found', description:'Message if announcement not found'}
-//             }
-//           }
-//         }
-//       }
-//     }
-//   */
-
-//   const itemId = request.params.id
-//   const buyCar = await BuyCar.findById(itemId)
-
-//   if (!buyCar) {
-//     return response.status(404).json({ message: 'Announcement not found' })
-//   }
-//   response.json(buyCar)
-
-// })
-
-itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, response) => {
+itemRouter.delete('/:id', auth, async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell item']
     #swagger.summary = 'Delete individual car announcement'
   */
 
+  const user = request.user
   const itemId = request.params.id
-  let deletedCar = await SellCar.findByIdAndDelete(itemId)
-
-  if (!deletedCar) {
-    deletedCar = await BuyCar.findByIdAndDelete(itemId)
-    if (!deletedCar) {
-      return response.status(404).end()
+  if (user.role === 'user') {
+    if (!user.announcements.includes(itemId)) {
+      return response.status(403).json({ message: 'Access denied. No permissions.' })
     }
   }
+  const deletedCar = await Car.findByIdAndDelete(itemId)
+  if (!deletedCar) {
+    return response.status(404).end()
+  }
 
-  if (deletedCar.announcement.photoFileNames.length > 0) {
+  const result = await User.updateMany({}, { $pull: { announcements: itemId } }, { new: true })
+
+  // if (!deletedCar) {
+  //   deletedCar = await BuyCar.findByIdAndDelete(itemId)
+  //   if (!deletedCar) {
+  //     return response.status(404).end()
+  //   }
+  //}
+
+  if (Object.keys(deletedCar.photoFileNames).length > 0) {
     const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
       const objectName = `${config.OCI_FOLDER}/${fileName}`
       const httpRequest = await getOCIAuthHeaders(objectName)
@@ -372,7 +282,69 @@ itemRouter.delete('/:id', auth, checkUserRole(['admin']), async (request, respon
       return response.status(204).end()
     })
   }
-  response.status(204).end()
+  else {
+    response.status(204).end()
+  }
+})
+
+itemRouter.put('/', auth, async (request, response) => {
+  const acceptedKeys = ['mark', 'model', 'fuelType', 'mileage', 'year', 'price', 'gearBoxType', 'description']
+  const body = request.body
+
+  if (!request.user.announcements.includes(body.id)) {
+    return response.status(403).json({ message: 'Access denied. No permissions.' })
+  }
+
+  const filteredData = Object.keys(body)
+    .filter(key => acceptedKeys.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = body[key]
+      return obj
+    }, {})
+  
+  let editedCar = null
+  
+  if (body.announcementType === 'buy') {
+    editedCar = await BuyCar.findByIdAndUpdate(body.id, { $set: filteredData }, { new: true })
+  }
+  else if (body.announcementType === 'sell') {
+    editedCar = await SellCar.findByIdAndUpdate(body.id, { $set: filteredData }, { new: true })
+  }
+  else {
+    return response.status(404).end()
+  }
+
+  response.status(204).json({editedCar, message: 'Edited announcement saved' })
+})
+
+itemRouter.put('/active/:id', auth, async (request, response) => {
+  const itemId = request.params.id
+
+  if (!request.user.announcements.includes(itemId)) {
+    return response.status(403).json({ message: 'Access denied. No permissions.' })
+  }
+
+  const car = await Car.findById(itemId)
+  
+  if (!car) {
+    return response.status(404).json({ message: 'Announcement not found' })
+  }
+
+  const newState = car.onActive === true ? false : true
+
+  let editedCar = null
+  
+  if (car.announcementType === 'buy') {
+    editedCar = await BuyCar.findByIdAndUpdate(itemId, { $set: {onActive: newState} }, { new: true })
+  }
+  else if (car.announcementType === 'sell') {
+    editedCar = await SellCar.findByIdAndUpdate(itemId, { $set: {onActive: newState} }, { new: true })
+  }
+  else {
+    return response.status(404).end()
+  }
+
+  response.status(204).json({editedCar, message: 'Edited announcement saved' })
 })
 
 module.exports = itemRouter
