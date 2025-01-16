@@ -91,7 +91,7 @@ messageRouter.get('/topics/:id/:index', auth, async (request, response) => {
   const { id, index } = request.params
   const user = request.user
   if (!user.sendedMessages.includes(id) && !user.receivedMessages.includes(id)) {
-    return response.status(204).json({ error: 'Unauthorized' })
+    return response.status(403).json({ message: 'Access denied. No permissions.' })
   }
   const rawMessages = await Message.find({ 'topic': id })
     .select('-_id message sendDate')

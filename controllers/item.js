@@ -317,4 +317,34 @@ itemRouter.put('/', auth, async (request, response) => {
   response.status(204).json({editedCar, message: 'Edited announcement saved' })
 })
 
+itemRouter.put('/active/:id', auth, async (request, response) => {
+  const itemId = request.params.id
+
+  if (!request.user.announcements.includes(itemId)) {
+    return response.status(403).json({ message: 'Access denied. No permissions.' })
+  }
+
+  const car = await Car.findById(itemId)
+  
+  if (!car) {
+    return response.status(404).json({ message: 'Announcement not found' })
+  }
+
+  const newState = car.onActive === true ? false : true
+
+  let editedCar = null
+  
+  if (car.announcementType === 'buy') {
+    editedCar = await BuyCar.findByIdAndUpdate(itemId, { $set: {onActive: newState} }, { new: true })
+  }
+  else if (car.announcementType === 'sell') {
+    editedCar = await SellCar.findByIdAndUpdate(itemId, { $set: {onActive: newState} }, { new: true })
+  }
+  else {
+    return response.status(404).end()
+  }
+
+  response.status(204).json({editedCar, message: 'Edited announcement saved' })
+})
+
 module.exports = itemRouter

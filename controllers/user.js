@@ -10,7 +10,7 @@ userRouter.get('/', auth, async (request, response) => {
     */
   const id = request.user.id
   const user = await User.findById({ '_id': id })
-    .populate({ path: 'announcements', select: 'announcementType mark model mileage price createdDate', sort: { 'createdDate': 1 } })
+    .populate({ path: 'announcements', select: 'announcementType mark model mileage price onActive createdDate', sort: { 'createdDate': 1 } })
 
   if (!user) {
     return response.status(404).end()

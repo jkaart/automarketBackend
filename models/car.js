@@ -40,7 +40,7 @@ const sellCarSchema = mongoose.Schema({
     type: Number,
     required: true
   },
-  onSale: {
+  onActive: {
     type: Boolean,
     default: true
   },

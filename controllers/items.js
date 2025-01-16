@@ -6,7 +6,7 @@ itemsRouter.get('/', async (request, response) => {
     #swagger.tags = ['Sell items']
     #swagger.summary = 'Response all announcements'
   */
-  const cars = await Car.find({}).sort({ 'sendDate': 1 })
+  const cars = await Car.find({}).sort({ 'createdDate': -1 })
   //const buyCars = await BuyCar.find({}).sort({ 'sendDate': 1 })
   if (cars.length === 0) {
     return response.status(204).end()
