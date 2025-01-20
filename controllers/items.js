@@ -15,12 +15,17 @@ itemsRouter.get('/', async (request, response) => {
 
 })
 
-itemsRouter.get('/sell', async (request, response) => {
+itemsRouter.get('/sell/:index', async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell items']
     #swagger.summary = 'Response all sell announcements'
   */
-  const cars = await SellCar.find({ announcementType: 'sell' })
+  const index = request.params.index
+  const cars = await SellCar.find({ })
+    .sort({ 'createdDate': -1 })
+    .skip(index * 10)
+    .limit(10)
+
   if (cars.length === 0) {
     return response.status(204).end()
   }
@@ -28,13 +33,17 @@ itemsRouter.get('/sell', async (request, response) => {
 
 })
 
-itemsRouter.get('/buy', async (request, response) => {
+itemsRouter.get('/buy/:index', async (request, response) => {
   /*@swagger
     #swagger.tags = ['Buy items']
     #swagger.summary = 'Response all buy announcements'
   */
-  const cars = await BuyCar.find({ announcementType: 'buy' })
-  console.log(cars)
+  const index = request.params.index
+  const cars = await BuyCar.find({ })
+    .sort({ 'createdDate': -1 })
+    .skip(index * 10)
+    .limit(10)
+
   if (cars.length === 0) {
     return response.status(204).end()
   }

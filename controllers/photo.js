@@ -30,7 +30,7 @@ photoRouter.get('/:fileName', async (request, response) => {
 
   const size = orgFileName.startsWith('thumb_')
     ? { width: 300, height: 225 }
-    : { width: 1024, height: 768 }
+    : { width: 800, height: 600 }
 
   const buffer = Buffer.from(res.data, 'binary')
   const output = sharp(buffer)

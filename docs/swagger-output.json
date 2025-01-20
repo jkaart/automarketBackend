@@ -59,13 +59,23 @@
         }
       }
     },
-    "/api/items/sell": {
+    "/api/items/sell/{index}": {
       "get": {
         "tags": [
           "Sell items"
         ],
         "summary": "Response all sell announcements",
         "description": "",
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -76,13 +86,23 @@
         }
       }
     },
-    "/api/items/buy": {
+    "/api/items/buy/{index}": {
       "get": {
         "tags": [
           "Buy items"
         ],
         "summary": "Response all buy announcements",
         "description": "",
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -265,6 +285,12 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
           }
         },
         "requestBody": {
@@ -276,28 +302,7 @@
                   "id": {
                     "example": "any"
                   },
-                  "mark": {
-                    "example": "any"
-                  },
-                  "model": {
-                    "example": "any"
-                  },
-                  "fuelType": {
-                    "example": "any"
-                  },
-                  "mileage": {
-                    "example": "any"
-                  },
-                  "year": {
-                    "example": "any"
-                  },
-                  "price": {
-                    "example": "any"
-                  },
-                  "gearBoxType": {
-                    "example": "any"
-                  },
-                  "description": {
+                  "announcementType": {
                     "example": "any"
                   }
                 }
@@ -446,6 +451,38 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/item/active/{id}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
@@ -760,6 +797,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }
