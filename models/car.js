@@ -1,16 +1,6 @@
 const config = require('../utils/config')
 const mongoose = require('mongoose')
 
-const baseOptions = {
-  discriminatorKey: 'type',
-  collection: 'cars'
-}
-
-const carSchema = mongoose.Schema({
-  announcementType: String
-}, baseOptions
-)
-
 const sellCarSchema = mongoose.Schema({
   announcementType: {
     type: String,
@@ -96,7 +86,6 @@ const buyCarSchema = mongoose.Schema({
   }
 })
 
-
 sellCarSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     if (returnedObject._id) {
@@ -108,14 +97,15 @@ sellCarSchema.set('toJSON', {
       returnedObject.thumbnailURLs = returnedObject.photoFileNames.map(fileName => `${config.SERVER_URL}/api/photo/thumb_${fileName}`)
       delete returnedObject.photoFileNames
     }
-    delete returnedObject.type
     delete returnedObject._v
     delete returnedObject.__v
+    delete returnedObject.kind
   }
 })
 
 buyCarSchema.set('toJSON', {
   transform: (document, returnedObject) => {
+    console.log('hep')
     if (returnedObject._id) {
       returnedObject.id = returnedObject._id.toString()
       delete returnedObject._id
@@ -127,7 +117,7 @@ buyCarSchema.set('toJSON', {
     }
     delete returnedObject._v
     delete returnedObject.__vd
-    delete returnedObject.type
+    delete returnedObject.kind
   }
 })
 

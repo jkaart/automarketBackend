@@ -42,13 +42,23 @@
     }
   ],
   "paths": {
-    "/api/items/": {
+    "/api/items/{index}": {
       "get": {
         "tags": [
           "Sell items"
         ],
         "summary": "Response all announcements",
         "description": "",
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
