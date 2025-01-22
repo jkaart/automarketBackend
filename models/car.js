@@ -105,6 +105,7 @@ sellCarSchema.set('toJSON', {
 
 buyCarSchema.set('toJSON', {
   transform: (document, returnedObject) => {
+    console.log('hep')
     if (returnedObject._id) {
       returnedObject.id = returnedObject._id.toString()
       delete returnedObject._id

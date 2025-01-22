@@ -1,16 +1,23 @@
 const itemsRouter = require('express').Router()
 const { SellCar, BuyCar, Car } = require('../models/car')
+const { auth, checkUserRole } = require('../utils/middleware')
 
-itemsRouter.get('/', async (request, response) => {
+itemsRouter.get('/:index', auth, checkUserRole(['admin']), async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell items']
     #swagger.summary = 'Response all announcements'
   */
-  const cars = await Car.find({}).sort({ 'createdDate': -1 })
-  //const buyCars = await BuyCar.find({}).sort({ 'sendDate': 1 })
+  const index = request.params.index
+  const cars = await Car.find({})
+    .sort({ 'createdDate': -1 })
+    .skip(index * 10)
+    .limit(10)
+    .populate({ path: 'user', select: '_id username' })
+
   if (cars.length === 0) {
     return response.status(204).end()
   }
+  //const cars = rawCars.map(car => ({...car, user: car.user.username, userId: car.user._id}))
   response.json(cars)
 
 })
