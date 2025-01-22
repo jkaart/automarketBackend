@@ -33,10 +33,9 @@ const userSchema = mongoose.Schema({
   registrationDate: { type: Date, default: Date.now },
 })
 
-userSchema.pre('findByIdAndDelete', async (doc) => {
-  mongoose.model('Item').deleteMany({ user: doc._id })
-  mongoose.model('Messages').deleteMany({ senderUser: doc._id })
-  mongoose.model('Messages').deleteMany({ recipientUser: doc._id })
+userSchema.post('findOneAndDelete', async (doc) => {
+  await mongoose.model('Topic').deleteMany({ senderUser: doc._id })
+  await mongoose.model('Message').deleteMany({ senderUser: doc._id })
 })
 
 userSchema.set('toJSON', {
