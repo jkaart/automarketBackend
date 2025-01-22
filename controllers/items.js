@@ -9,7 +9,7 @@ itemsRouter.get('/:index', auth, checkUserRole(['admin']), async (request, respo
   */
   const index = request.params.index
   const cars = await Car.find({})
-    .sort({ 'createdDate': -1 })
+    .sort({ 'createdDate': 1 })
     .skip(index * 10)
     .limit(10)
     .populate({ path: 'user', select: '_id username' })

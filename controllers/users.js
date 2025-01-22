@@ -13,7 +13,7 @@ usersRouter.get('/:index', auth, checkUserRole(['admin']), async (request, respo
   const index = request.params.index
 
   const users = await User.find({})
-    .sort({ 'registrationDate': -1 })
+    .sort({ 'registrationDate': 1 })
     .skip(index * 10)
     .limit(10)
 
