@@ -21,7 +21,7 @@ itemsRouter.get('/sell/:index', async (request, response) => {
     #swagger.summary = 'Response all sell announcements'
   */
   const index = request.params.index
-  const cars = await SellCar.find({ })
+  const cars = await SellCar.find({ onActive: true })
     .sort({ 'createdDate': -1 })
     .skip(index * 10)
     .limit(10)
@@ -39,7 +39,7 @@ itemsRouter.get('/buy/:index', async (request, response) => {
     #swagger.summary = 'Response all buy announcements'
   */
   const index = request.params.index
-  const cars = await BuyCar.find({ })
+  const cars = await BuyCar.find({ onActive: true })
     .sort({ 'createdDate': -1 })
     .skip(index * 10)
     .limit(10)
