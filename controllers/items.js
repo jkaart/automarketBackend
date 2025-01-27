@@ -27,7 +27,7 @@ itemsRouter.get('/', async (request, response) => {
     #swagger.summary = 'Response all active announcements'
   */
   //const index = request.params.index
-  const cars = await Car.find({ onActive: true })
+  const cars = await SellCar.find({ onActive: true })
     .sort({ 'createdDate': 1 })
   // .skip(index * 10)
   // .limit(10)
