@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid')
 const config = require('../utils/config')
 const { SellCar, BuyCar, Car } = require('../models/car')
 const User = require('../models/user')
-const { auth, checkUserRole } = require('../utils/middleware')
+const { auth } = require('../utils/middleware')
 const getOCIAuthHeaders = require('../utils/oci')
 
 const checkFileTypes = (request, file, next) => {
@@ -24,8 +24,6 @@ const upload =
     },
     fileFilter: checkFileTypes
   })
-
-//Todo: need purchase car implementing
 
 itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) => {
   /*@swagger
@@ -97,30 +95,16 @@ itemRouter.post('/', auth, upload.array('photos', 3), async (request, response) 
   */
   const user = request.user
   const { mark, model, gearBoxType, price, description, announcementType } = request.body
-  /* if (!request.files) {
-          return response.status(422).json('Photos missing')
-      }
-   */
+
   if (announcementType === 'sell') {
     const { fuelType, mileage } = request.body
     const storedFileNames = []
 
     const uploadResponses = request.files.map(async file => {
-      //const orgFileExt = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
       const newFileName = uuidv4() + '.jpg'
       storedFileNames.push(newFileName)
 
-      /* const output = await sharp(file.buffer)
-        .resize({ width: 1024 })
-        .toBuffer()
-  
-      const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, output, {
-        headers: {
-          'Content-Type': 'image/jpeg',
-        },
-      }) */
-
-      const result = await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
+      await axios.put(`${config.OCI_URI}/${config.OCI_FOLDER}/${newFileName}`, file.buffer,
         {
           headers: {
             'Content-Type': file.mimetype,
@@ -260,14 +244,7 @@ itemRouter.delete('/:id', auth, async (request, response) => {
     return response.status(404).end()
   }
 
-  const result = await User.updateMany({}, { $pull: { announcements: itemId } }, { new: true })
-
-  // if (!deletedCar) {
-  //   deletedCar = await BuyCar.findByIdAndDelete(itemId)
-  //   if (!deletedCar) {
-  //     return response.status(404).end()
-  //   }
-  //}
+  await User.updateMany({}, { $pull: { announcements: itemId } }, { new: true })
 
   if (Object.keys(deletedCar.photoFileNames).length > 0) {
     const deleteResponses = deletedCar.photoFileNames.map(async fileName => {
