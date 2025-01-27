@@ -42,12 +42,12 @@
     }
   ],
   "paths": {
-    "/api/items/{index}": {
+    "/api/items/admin/{index}": {
       "get": {
         "tags": [
           "Sell items"
         ],
-        "summary": "Response all announcements",
+        "summary": "Response all announcements for admin",
         "description": "",
         "parameters": [
           {
@@ -71,6 +71,23 @@
           },
           "403": {
             "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/api/items/": {
+      "get": {
+        "tags": [
+          "Sell items"
+        ],
+        "summary": "Response all announcements",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
           }
         }
       }
