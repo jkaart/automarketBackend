@@ -24,13 +24,13 @@ itemsRouter.get('/admin/:index', auth, checkUserRole(['admin']), async (request,
 itemsRouter.get('/', async (request, response) => {
   /*@swagger
     #swagger.tags = ['Sell items']
-    #swagger.summary = 'Response all announcements'
+    #swagger.summary = 'Response all active announcements'
   */
   //const index = request.params.index
-  const cars = await Car.find({})
+  const cars = await Car.find({ onActive: true })
     .sort({ 'createdDate': 1 })
-    // .skip(index * 10)
-    // .limit(10)
+  // .skip(index * 10)
+  // .limit(10)
 
   if (cars.length === 0) {
     return response.status(204).end()
